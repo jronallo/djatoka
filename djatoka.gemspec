@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{djatoka}
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jason Ronallo"]
-  s.date = %q{2010-07-08}
+  s.date = %q{2010-07-09}
   s.default_executable = %q{djatoka_url}
   s.description = %q{Simple client library for the djatoka image server.}
   s.email = %q{jronallo@gmail.com}
@@ -25,8 +25,13 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
+     "bin/djatoka_url",
+     "djatoka.gemspec",
      "lib/djatoka.rb",
+     "lib/djatoka/common.rb",
+     "lib/djatoka/resolver.rb",
      "test/helper.rb",
+     "test/test_common.rb",
      "test/test_djatoka.rb"
   ]
   s.homepage = %q{http://github.com/jronallo/djatoka}
@@ -35,8 +40,12 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{Simple client library for the djatoka image server.}
   s.test_files = [
-    "test/test_djatoka.rb",
-     "test/helper.rb"
+    "test/test_metadata.rb",
+     "test/test_djatoka.rb",
+     "test/test_resolver.rb",
+     "test/test_region.rb",
+     "test/helper.rb",
+     "test/test_common.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -49,12 +58,14 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<curb>, [">= 0"])
       s.add_runtime_dependency(%q<json>, [">= 0"])
       s.add_runtime_dependency(%q<trollop>, [">= 0"])
+      s.add_runtime_dependency(%q<mash>, [">= 0"])
     else
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<addressable>, ["= 2.1.2"])
       s.add_dependency(%q<curb>, [">= 0"])
       s.add_dependency(%q<json>, [">= 0"])
       s.add_dependency(%q<trollop>, [">= 0"])
+      s.add_dependency(%q<mash>, [">= 0"])
     end
   else
     s.add_dependency(%q<shoulda>, [">= 0"])
@@ -62,6 +73,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<curb>, [">= 0"])
     s.add_dependency(%q<json>, [">= 0"])
     s.add_dependency(%q<trollop>, [">= 0"])
+    s.add_dependency(%q<mash>, [">= 0"])
   end
 end
 

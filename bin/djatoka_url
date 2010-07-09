@@ -3,8 +3,38 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require 'djatoka'
 require 'trollop'
 
-resolver = Djatoka::Resolver.new(ARGV[0])
-url = resolver.region_url(ARGV[1])
+opts = Trollop::options do
+  banner <<-EOS
+This script take a Djatoka resolver base URL and returns a full URI for a particular
+identifier.
 
-puts url.to_s
+Usage:
+  djatoka_url [options] --resolver http://african.lanl.gov/adore-djatoka/resolver --rft_id info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3
+
+where options are:
+EOS
+  opt :resolver, "A Djatoka resolver base URL", :required => true, :type => String
+  opt :rft_id, "Resource identifier", :required => true, :type => String, :short => :i
+  opt :level, 'Level', :type => String
+  opt :rotate, 'Rotate', :type => String
+  opt :region, 'Region', :type => String
+  opt :scale, "Scale", :type => String
+  opt :format, 'Format', :type => String
+  opt :clayer, 'clayer', :type => String
+  opt :square, 'Squares the image by cropping'
+  opt :smallbox, 'Creates a 75x75 image'
+end
+
+resolver = Djatoka::Resolver.new(opts[:resolver])
+region = resolver.region(opts[:rft_id])
+
+[:level, :rotate, :region, :scale, :format, :clayer].each do |param|
+  region.send(param, opts[param]) if opts[param]
+end
+
+if opts[:smallbox]
+  region.smallbox
+end
+
+puts region.url
 

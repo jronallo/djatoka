@@ -15,6 +15,7 @@ begin
     gem.add_dependency "curb", ">= 0"
     gem.add_dependency "json", ">= 0"
     gem.add_dependency 'trollop', '>= 0'
+    gem.add_dependency 'mash', '>= 0'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
