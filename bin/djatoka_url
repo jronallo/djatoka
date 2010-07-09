@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+require 'djatoka'
+require 'trollop'
+
+resolver = Djatoka::Resolver.new(ARGV[0])
+url = resolver.region_url(ARGV[1])
+
+puts url.to_s
+
