@@ -2,9 +2,10 @@ require 'helper'
 
 class TestDjatokaMetadata < Test::Unit::TestCase
   with_a_resolver do
-  context 'a metadata response' do
+    context 'a metadata object' do
       setup do
-        @metadata = @resolver.metadata(@identifier)
+        @metadata_obj = @resolver.metadata(@identifier)
+        @metadata = @metadata_obj.perform
       end
 
       should 'create a metadata object' do
@@ -12,9 +13,15 @@ class TestDjatokaMetadata < Test::Unit::TestCase
       end
 
       should "create a metadata URL for an identifier" do
-        #'http://african.lanl.gov/adore-djatoka/resolver?url_ver=Z39.88-2004&svc_id=info:lanl-repo/svc/getMetadata&rft_id=info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3',
-        assert_equal 'http://african.lanl.gov/adore-djatoka/resolver?url_ver=Z39.88-2004&svc_id=info:lanl-repo/svc/getMetadata&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3',
-          @metadata.url
+        assert @metadata.url.include? 'http://african.lanl.gov/adore-djatoka/resolver?'
+        assert @metadata.url.include? 'url_ver=Z39.88-2004'
+        assert @metadata.url.include? '&svc_id=info%3Alanl-repo%2Fsvc%2FgetMetadata'
+        assert @metadata.url.include? '&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3'
+      end
+
+      should 'create a metadata uri for an identifier' do
+        uri = @metadata.uri
+        assert_equal 'african.lanl.gov', uri.host
       end
 
       should "return imagefile metadata for an identifier" do
@@ -35,12 +42,43 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         assert_equal '5120', @metadata.width
       end
 
+      should 'return an OK status for a good request' do
+        metadata = @metadata.status
+      end
+
       should 'return a nil for a bad request' do
         metadata = @resolver.metadata('asdf')
         assert_equal nil, metadata.status
       end
+    end #context metadata response
+
+    context 'using net::http' do
+      should 'return a height for a good request' do
+        Djatoka.use_curb=false
+        assert_equal '3372', Djatoka::Metadata.new(@resolver, @identifier).perform.height
+        Djatoka.use_curb=true
+      end
     end
-  end
+
+    context 'determining all the levels for a particular metadata response' do
+      setup do
+        @metadata_obj = @resolver.metadata(@identifier)
+        @metadata = @metadata_obj.perform
+        @levels = @metadata.all_levels
+      end
+      should 'return height and width for all levels' do
+        levels = { "0"=>{"height"=>52, "width"=>80},
+                   "1"=>{"height"=>105, "width"=>160},
+                   "2"=>{"height"=>210, "width"=>320},
+                   "3"=>{"height"=>421, "width"=>640},
+                   "4"=>{"height"=>843, "width"=>1280},
+                   "5"=>{"height"=>1686, "width"=>2560},
+                   "6"=>{"height"=>3372, "width"=>5120},}
+        assert_equal levels, @levels
+      end
+    end # levels
+
+  end #with_a_resolver
 
 end
 

@@ -5,6 +5,7 @@ require 'shoulda'
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'djatoka'
+require 'ruby-debug'
 
 class Test::Unit::TestCase
   def self.with_a_resolver(&block)

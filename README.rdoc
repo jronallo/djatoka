@@ -1,16 +1,103 @@
 = djatoka
 
-Simple client library for use with the djatoka image server.
+Simple library for use with the {Djatoka JPEG2000 image server}[http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page].
+It helps ease creation of the {OpenURLs}[http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Djatoka_OpenURL_Services#djatoka_OpenURL_Service_Types]
+used by Djatoka.
 
-== Note on Patches/Pull Requests
+== Installation
 
-* Fork the project.
-* Make your feature addition or bug fix.
-* Add tests for it. This is important so I don't break it in a
-  future version unintentionally.
-* Commit, do not mess with rakefile, version, or history.
-  (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
-* Send me a pull request. Bonus points for topic branches.
+{Install the Djatoka image server}[http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Installation]
+
+  gem install djatoka
+
+== Example usage
+  # Create a resolver object with a URL.
+  resolver = Djatoka::Resolver.new('http://african.lanl.gov/adore-djatoka/resolver')
+  
+  # A known good identifier
+  identifier = 'info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3'
+  
+  # Ping the server to see if that resource exists.
+  resolver.ping(identifier)
+   # => <Mash identifier="info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3" status="OK">
+  resolver.ping('foobar')
+   # => nil
+  
+  # Create a Djatoka::Metadata object and perform the request to the server for metadata.
+  metadata = resolver.metadata(identifier).perform
+  metadata.levels
+   # => "6"
+  metadata.height
+   # => "3372"
+  metadata.width
+   # => "5120"
+
+  # Create a Djatoka::Region
+  region = resolver.region(identifier)
+
+  # Set a scale for the region and return the url as a String.
+  region.scale('600').url
+   # => "http://african.lanl.gov/adore-djatoka/resolver?url_ver=Z39.88-2004&svc.scale=600&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3&svc_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajpeg2000&svc_id=info%3Alanl-repo%2Fsvc%2FgetRegion"
+{See the example}[http://african.lanl.gov/adore-djatoka/resolver?url_ver=Z39.88-2004&svc.scale=600&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3&svc_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajpeg2000&svc_id=info%3Alanl-repo%2Fsvc%2FgetRegion]
+
+  # Set a new scale for the region and chain together other methods to set further query parameters.
+  region.scale(300).format('image/png').region([1250,550,800,800]).rotate(180).level(5).url
+   # => "http://african.lanl.gov/adore-djatoka/resolver?svc.level=5&url_ver=Z39.88-2004&svc.region=1250%2C550%2C800%2C800&svc.scale=300&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3&svc_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajpeg2000&svc_id=info%3Alanl-repo%2Fsvc%2FgetRegion&svc.format=image%2Fpng&svc.rotate=180"
+{See the example image}[http://african.lanl.gov/adore-djatoka/resolver?svc.level=5&url_ver=Z39.88-2004&svc.region=1250%2C550%2C800%2C800&svc.scale=300&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3&svc_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajpeg2000&svc_id=info%3Alanl-repo%2Fsvc%2FgetRegion&svc.format=image%2Fpng&svc.rotate=180]
+
+== Rails
+
+This has only been tested in Rails 2.3.x
+
+In config/environment.rb
+    config.gem 'djatoka'
+Install the gem
+    rake gems:install
+
+In you erb template use one of the Djatoka::ViewHelpers :
+    <%= djatoka_square_image_tag('info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3',
+      {:scale => 250, :class => 'djatoka_image',
+        :resolver => 'http://african.lanl.gov/adore-djatoka/resolver'
+      }) %>
+
+
+If you want to use the OpenLayers viewer, run the generator:
+    script/generate djatoka
+
+Make sure the included javascripts and jQuery are included in the head.
+
+Edit config/initializers/djatoka.rb to the URL for your Djatoka image server resolver.
+And then restart your Rails server.
+
+Use the following in you erb template:
+    <%= djatoka_init_openlayers('http://memory.loc.gov/gmd/gmd433/g4330/g4330/np000066.jp2', 'map') %>
+    <div id='map' style="height:500px;width:500px;"></div>
+
+NOTE: Because the OpenLayers viewer uses Ajax, the Djatoka resolver URL must be
+at the same site (domain and port) as your application. The scripts also expect
+the resolver to remain at /adore-djatoka/resolver so maintain that path if you
+proxy Djatoka or dig into the javascript to change the path.
+
+== Commandline
+
+There is also a little commandline utility for outputting the OpenURL.
+
+    $ djatoka_url --resolver http://african.lanl.gov/adore-djatoka/resolver --rft-id info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3 --scale 300 --square
+    {"region"=>"0,874,421,421", "scale"=>"300", "level"=>"3"}
+    http://african.lanl.gov/adore-djatoka/resolver?svc.level=3&url_ver=Z39.88-2004&svc.region=0%2C874%2C421%2C421&svc.scale=300&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3&svc_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajpeg2000&svc_id=info%3Alanl-repo%2Fsvc%2FgetRegion
+    
+    $ djatoka_url --resolver http://african.lanl.gov/adore-djatoka/resolver --rft-id info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3 --smallbox --browser chromium-browser   
+    
+    $ djatoka_url --help 
+
+
+== TODO
+- Testing the view helpers.
+- View more examples of images where the dwtLevels differ from the Djatoka levels.
+
+== Author
+
+Jason Ronallo
 
 == Copyright
 

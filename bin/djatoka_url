@@ -2,6 +2,7 @@
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require 'djatoka'
 require 'trollop'
+require 'pp'
 
 opts = Trollop::options do
   banner <<-EOS
@@ -23,6 +24,9 @@ EOS
   opt :clayer, 'clayer', :type => String
   opt :square, 'Squares the image by cropping'
   opt :smallbox, 'Creates a 75x75 image'
+  opt :metadata, 'Output metadata'
+  opt :levels,   'Output Levels'
+  opt :browser, 'Set the browser to open JSON and images with', :type => String
 end
 
 resolver = Djatoka::Resolver.new(opts[:resolver])
@@ -36,5 +40,26 @@ if opts[:smallbox]
   region.smallbox
 end
 
+if opts[:square]
+  region.square
+end
+
+if opts[:metadata] or opts[:levels]
+ metadata = resolver.metadata(opts[:rft_id])
+ metadata.perform
+ if opts[:metadata]
+   puts metadata.url
+   `#{opts[:browser]} "#{metadata.url}"` if opts[:browser]
+   pp metadata.response
+ end
+ if opts[:levels]
+   pp metadata.levels
+ end
+end
+
+pp region.query
+
 puts region.url
+
+`#{opts[:browser]} "#{region.url}"` if opts[:browser]
 

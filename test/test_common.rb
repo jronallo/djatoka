@@ -8,16 +8,54 @@ context 'A Djatoka Resolver' do
         @region = Djatoka::Region.new(@resolver, @identifier)
       end
       should 'create a query for a 75x75 version of the image' do
-        assert_equal '0,874,3372,3372', @region.smallbox.query.region
+        assert_equal '0,874,105,105', @region.smallbox.query.region
         assert_equal '75', @region.smallbox.query.scale
       end
 
       should 'return a String for a smallbox URL' do
         assert @region.smallbox_url.is_a? String
+        assert @region.smallbox_url.include? 'http://african.lanl.gov'
+        assert @region.smallbox_url.include? 'svc.region=0%2C874%2C105%2C105'
       end
 
+      should 'return a uri for a small square version of the image' do
+        assert_equal '0,874,105,105', @region.smallbox.uri.query_values['svc.region']
+      end
+
+      should 'create a query for a square version of the image' do
+        assert_equal '0,874,3372,3372', @region.square.query.region
+        assert_equal nil, @region.square.query.scale
+      end
       should 'return a uri for a square version of the image' do
-        assert_equal '0,874,3372,3372', @region.smallbox.uri.query_values['svc.region']
+        assert_equal '0,874,3372,3372', @region.square_uri.query_values['svc.region']
+        assert_equal nil, @region.square_uri.query_values['svc.scale']
+      end
+      should 'return a url for a square version of the image' do
+        assert @region.square_url.is_a? String
+        assert @region.square_url.include? 'http://african.lanl.gov'
+        assert @region.square_url.include? 'svc.region=0%2C874%2C3372%2C3372'
+      end
+      should 'create a query for a square version of the image at a good level' do
+        @region.scale('555')
+        assert_equal '0,874,843,843', @region.square.query.region
+        assert_equal '555', @region.square.query.scale
+        assert_equal '4', @region.square.query.level
+      end
+
+      should 'pick the best level' do
+        metadata = Djatoka::Metadata.new(@resolver, @identifier).perform
+        @region.scale('200')
+        best_level = @region.pick_best_level(metadata)
+        assert_equal 2, best_level
+      end
+
+      context 'an image which is higher than it is wider' do
+        setup do
+          @region = Djatoka::Region.new(@resolver, 'info:lanl-repo/ds/b820f537-26a1-4af8-b86a-e7a4cac6187a')
+        end
+        should 'crop appropriately into a square' do
+          assert_equal '513,0,4093,4093', @region.square.query.region
+        end
       end
     end
 

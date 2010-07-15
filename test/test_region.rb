@@ -33,6 +33,10 @@ class TestDjatokaMetadata < Test::Unit::TestCase
           assert_equal @identifier, @query_values['rft_id']
           assert_equal nil, @query_values['svc.scale']
         end
+        should 'output a region url' do
+          assert @region.url.is_a? String
+          assert @region.url.include? 'http://african.lanl.gov'
+        end
       end
 
       context 'add query parameters' do
@@ -107,7 +111,36 @@ class TestDjatokaMetadata < Test::Unit::TestCase
             assert_equal 'info:lanl-repo/svc/getRegion', @region2_query_values['svc_id']
           end
         end
+      end #context create a query uri with svc values
 
+      context 'create a new region and pass in query parameters' do
+        should 'accept param keys as symbols' do
+          params = {:level=> 3, :rotate=>180, :region => '0,0,500,500',
+            :scale => 75, :format => 'image/png'
+          }
+          region = Djatoka::Region.new(@resolver,@identifier,params)
+          assert_equal '3', region.query.level
+          assert_equal '180', region.query.rotate
+          assert_equal '0,0,500,500', region.query.region
+          assert_equal '75', region.query.scale
+          assert_equal 'image/png', region.query.format
+        end
+        should 'accept param keys as strings' do
+          params = {'level'=> 3, 'rotate'=>180, 'region' => '0,0,500,500',
+            'scale' => 75, 'format' => 'image/png'
+          }
+          region = Djatoka::Region.new(@resolver,@identifier,params)
+          assert_equal '3', region.query.level
+          assert_equal '180', region.query.rotate
+          assert_equal '0,0,500,500', region.query.region
+          assert_equal '75', region.query.scale
+          assert_equal 'image/png', region.query.format
+        end
+        should 'not choke on params it responds to but are not instance methods' do
+          region = Djatoka::Region.new(@resolver,@identifier,{:class => 'djatoka_image'})
+          assert region.is_a? Djatoka::Region
+          assert_equal nil, region.uri.query_values['svc.class']
+        end
       end
 
     end #context

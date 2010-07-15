@@ -5,17 +5,19 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "djatoka"
-    gem.summary = %Q{Simple client library for the djatoka image server.}
-    gem.description = %Q{Simple client library for the djatoka image server.}
+    gem.summary = %Q{Djatoka image server helpers for Ruby and Rails.}
+    gem.description = %Q{The djatoka library provides some simple methods for creation of the OpenURLs needed to communicate with the Djatoka image server.}
     gem.email = "jronallo@gmail.com"
     gem.homepage = "http://github.com/jronallo/djatoka"
     gem.authors = ["Jason Ronallo"]
     gem.add_development_dependency "shoulda", ">= 0"
+    gem.add_development_dependency "ruby-debug", ">= 0"
     gem.add_dependency "addressable", "2.1.2"
-    gem.add_dependency "curb", ">= 0"
+    #gem.add_dependency "curb", ">= 0"
     gem.add_dependency "json", ">= 0"
     gem.add_dependency 'trollop', '>= 0'
     gem.add_dependency 'mash', '>= 0'
+    gem.files = FileList["[A-Z]*", "{bin,generators,lib}/**/*"]
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
@@ -47,7 +49,8 @@ task :test => :check_dependencies
 
 task :default => :test
 
-require 'rake/rdoctask'
+#require 'rake/rdoctask'
+require 'hanna/rdoctask'
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
