@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jason Ronallo"]
-  s.date = %q{2010-07-15}
+  s.date = %q{2010-07-28}
   s.default_executable = %q{djatoka_url}
   s.description = %q{The djatoka library provides some simple methods for creation of the OpenURLs needed to communicate with the Djatoka image server.}
   s.email = %q{jronallo@gmail.com}
@@ -70,14 +70,14 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<addressable>, ["= 2.1.2"])
       s.add_runtime_dependency(%q<json>, [">= 0"])
       s.add_runtime_dependency(%q<trollop>, [">= 0"])
-      s.add_runtime_dependency(%q<mash>, [">= 0"])
+      s.add_runtime_dependency(%q<hashie>, [">= 0"])
     else
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<ruby-debug>, [">= 0"])
       s.add_dependency(%q<addressable>, ["= 2.1.2"])
       s.add_dependency(%q<json>, [">= 0"])
       s.add_dependency(%q<trollop>, [">= 0"])
-      s.add_dependency(%q<mash>, [">= 0"])
+      s.add_dependency(%q<hashie>, [">= 0"])
     end
   else
     s.add_dependency(%q<shoulda>, [">= 0"])
@@ -85,7 +85,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<addressable>, ["= 2.1.2"])
     s.add_dependency(%q<json>, [">= 0"])
     s.add_dependency(%q<trollop>, [">= 0"])
-    s.add_dependency(%q<mash>, [">= 0"])
+    s.add_dependency(%q<hashie>, [">= 0"])
   end
 end
 
