@@ -46,7 +46,7 @@ class Djatoka::Resolver
     m_url = ping_url(rft_id)
     response = get_json(m_url)
     if response
-      Mash.new(response)
+      Hashie::Mash.new(response)
     else
       response
     end

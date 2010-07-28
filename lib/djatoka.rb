@@ -62,7 +62,7 @@ require 'rubygems'
 require 'addressable/uri'
 require 'addressable/template'
 require 'json'
-require 'mash'
+require 'hashie'
 
 
 if defined? Rails

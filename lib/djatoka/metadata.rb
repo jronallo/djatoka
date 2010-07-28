@@ -55,7 +55,7 @@ class Djatoka::Metadata
   # to determine these other levels ourself.
   def all_levels
     perform if !response # if we haven't already performed the metadata query do it now
-    levels_hash = Mash.new
+    levels_hash = Hashie::Mash.new
     dwt_levels_i = dwt_levels.to_i
     (0..dwt_levels_i).each do |level_num|
       level_height = height.to_i

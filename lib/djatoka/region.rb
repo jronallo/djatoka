@@ -27,7 +27,7 @@ class Djatoka::Region
       @resolver = resolver
     end
     @rft_id = rft_id
-    @query = Mash.new
+    @query = Hashie::Mash.new
     unless params.empty?
       map_params(params)
     end
