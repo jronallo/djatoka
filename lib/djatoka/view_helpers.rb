@@ -70,7 +70,7 @@ module Djatoka
       resolver = determine_resolver(params)
       metadata_url = resolver.metadata_url(rft_id)
       %Q|<script type="text/javascript">
-          $(document).ready(function() {openlayersInit('http://#{resolver.host}',
+          jQuery(document).ready(function() {openlayersInit('http://#{resolver.host}',
           '#{metadata_url}',
           '#{rft_id}', '#{div_identifier}');
           });
