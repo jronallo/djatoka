@@ -53,7 +53,7 @@ if opts[:metadata] or opts[:levels]
    pp metadata.response
  end
  if opts[:levels]
-   pp metadata.levels
+   pp metadata.all_levels
  end
 end
 
