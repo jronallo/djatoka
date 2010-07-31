@@ -50,7 +50,7 @@ module Djatoka::Common
   # try to compensate for any difference between the dwtLevels and djatoka levels
   # so that we get a decent image returned.
   def pick_best_level(metadata)
-    best_level = '6'
+    best_level = '10'
     metadata_levels = metadata.all_levels
     metadata_levels.keys.sort.reverse.each do |k|
        if metadata_levels[k].height.to_i > query.scale.to_i and
@@ -89,7 +89,8 @@ module Djatoka::Common
         # dwtLevels and the djatoka levels. So far the only case seen is where
         # the dwtLevels are greater than the djatoka levels.
         if metadata.dwt_levels.to_i > metadata.levels.to_i
-          good_query_level = query.level.to_i + 1
+          difference = metadata.dwt_levels.to_i - metadata.levels.to_i
+          good_query_level = query.level.to_i + difference
         # dwtLevels in the cases seen so far almost always match the djatoka levels.
         elsif metadata.dwt_levels.to_i == metadata.levels.to_i
           good_query_level = query.level.to_i
