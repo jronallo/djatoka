@@ -124,7 +124,9 @@ class Djatoka::Region
   def map_params(params)
     params.each do |k,v|
       if k.to_s != 'resolver' and self.respond_to?(k) and
-        self.class.instance_methods(false).include?(k.to_s)
+        (self.class.instance_methods(false).include?(k.to_s) or
+        self.class.instance_methods(false).include?(k.to_sym)
+        )
         self.send(k,v)
       end
     end

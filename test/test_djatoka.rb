@@ -4,6 +4,7 @@ class TestDjatoka < Test::Unit::TestCase
   should 'allow Djatoka.use_curb to be set' do
     Djatoka.use_curb=true
     assert Djatoka.use_curb?
+    set_testing_curb
   end
 
   with_a_resolver do

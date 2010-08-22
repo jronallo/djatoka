@@ -5,7 +5,7 @@ require 'shoulda'
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'djatoka'
-require 'ruby-debug'
+#require 'ruby-debug'
 
 class Test::Unit::TestCase
   def self.with_a_resolver(&block)
@@ -17,6 +17,15 @@ class Test::Unit::TestCase
       end
 
       merge_block(&block) if block_given?
+    end
+  end
+
+  def set_testing_curb
+    begin
+      require 'curb'
+      Djatoka.use_curb = true
+    rescue LoadError
+      Djatoka.use_curb = false
     end
   end
 

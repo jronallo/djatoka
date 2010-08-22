@@ -10,19 +10,22 @@ used by Djatoka.
 
   gem install djatoka
 
+If you wish to use the curb gem instead of Net::HTTP, install it:
+gem install curb
+
 == Example usage
   # Create a resolver object with a URL.
   resolver = Djatoka::Resolver.new('http://african.lanl.gov/adore-djatoka/resolver')
-  
+
   # A known good identifier
   identifier = 'info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3'
-  
+
   # Ping the server to see if that resource exists.
   resolver.ping(identifier)
    # => <Mash identifier="info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3" status="OK">
   resolver.ping('foobar')
    # => nil
-  
+
   # Create a Djatoka::Metadata object and perform the request to the server for metadata.
   metadata = resolver.metadata(identifier).perform
   metadata.levels
@@ -78,17 +81,24 @@ at the same site (domain and port) as your application. The scripts also expect
 the resolver to remain at /adore-djatoka/resolver so maintain that path if you
 proxy Djatoka or dig into the javascript to change the path.
 
+== Ruby versions
+
+Tested with the following Ruby versions:
+- 1.8.7-p249
+- 1.8.7-p302
+- 1.9.2-p0
+
 == Commandline
 
 There is also a little commandline utility for outputting the OpenURL.
 
-    $ djatoka_url --resolver http://african.lanl.gov/adore-djatoka/resolver --rft-id info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3 --scale 300 --square
+    $ djatoka_url --resolver http://african.lanl.gov/adore-djatoka/resolver --rftid info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3 --scale 300 --square
     {"region"=>"0,874,421,421", "scale"=>"300", "level"=>"3"}
     http://african.lanl.gov/adore-djatoka/resolver?svc.level=3&url_ver=Z39.88-2004&svc.region=0%2C874%2C421%2C421&svc.scale=300&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3&svc_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajpeg2000&svc_id=info%3Alanl-repo%2Fsvc%2FgetRegion
-    
-    $ djatoka_url --resolver http://african.lanl.gov/adore-djatoka/resolver --rft-id info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3 --smallbox --browser chromium-browser   
-    
-    $ djatoka_url --help 
+
+    $ djatoka_url --resolver http://african.lanl.gov/adore-djatoka/resolver --rftid info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3 --smallbox --browser chromium-browser
+
+    $ djatoka_url --help
 
 
 == TODO

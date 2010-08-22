@@ -11,9 +11,10 @@ begin
     gem.homepage = "http://github.com/jronallo/djatoka"
     gem.authors = ["Jason Ronallo"]
     gem.add_development_dependency "shoulda", ">= 0"
-    gem.add_development_dependency "ruby-debug", ">= 0"
+    #gem.add_development_dependency "ruby-debug", ">= 0"
+    gem.add_development_dependency "hanna", ">= 0"
     gem.add_dependency "addressable", "2.1.2"
-    #gem.add_dependency "curb", ">= 0"
+    gem.add_development_dependency "curb", ">= 0"
     gem.add_dependency "json", ">= 0"
     gem.add_dependency 'trollop', '>= 0'
     gem.add_dependency 'hashie', '>= 0'
@@ -49,8 +50,11 @@ task :test => :check_dependencies
 
 task :default => :test
 
-#require 'rake/rdoctask'
-require 'hanna/rdoctask'
+begin
+  require 'hanna/rdoctask'
+rescue LoadError
+  require 'rake/rdoctask'
+end
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 

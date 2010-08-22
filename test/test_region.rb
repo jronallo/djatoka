@@ -126,7 +126,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
           assert_equal 'image/png', region.query.format
         end
         should 'accept param keys as strings' do
-          params = {'level'=> 3, 'rotate'=>180, 'region' => '0,0,500,500',
+          params = {'level'=> 3, 'rotate'=> 180, 'region' => '0,0,500,500',
             'scale' => 75, 'format' => 'image/png'
           }
           region = Djatoka::Region.new(@resolver,@identifier,params)

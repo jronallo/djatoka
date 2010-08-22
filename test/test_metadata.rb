@@ -56,7 +56,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
       should 'return a height for a good request' do
         Djatoka.use_curb=false
         assert_equal '3372', Djatoka::Metadata.new(@resolver, @identifier).perform.height
-        Djatoka.use_curb=true
+        set_testing_curb
       end
     end
 

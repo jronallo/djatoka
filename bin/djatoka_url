@@ -10,12 +10,12 @@ This script take a Djatoka resolver base URL and returns a full URI for a partic
 identifier.
 
 Usage:
-  djatoka_url [options] --resolver http://african.lanl.gov/adore-djatoka/resolver --rft_id info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3
+  djatoka_url [options] --resolver http://african.lanl.gov/adore-djatoka/resolver --rftid info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3
 
 where options are:
 EOS
   opt :resolver, "A Djatoka resolver base URL", :required => true, :type => String
-  opt :rft_id, "Resource identifier", :required => true, :type => String, :short => :i
+  opt :rftid, "Resource identifier", :required => true, :type => String, :short => :i
   opt :level, 'Level', :type => String
   opt :rotate, 'Rotate', :type => String
   opt :region, 'Region', :type => String
@@ -30,7 +30,7 @@ EOS
 end
 
 resolver = Djatoka::Resolver.new(opts[:resolver])
-region = resolver.region(opts[:rft_id])
+region = resolver.region(opts[:rftid])
 
 [:level, :rotate, :region, :scale, :format, :clayer].each do |param|
   region.send(param, opts[param]) if opts[param]
@@ -45,7 +45,7 @@ if opts[:square]
 end
 
 if opts[:metadata] or opts[:levels]
- metadata = resolver.metadata(opts[:rft_id])
+ metadata = resolver.metadata(opts[:rftid])
  metadata.perform
  if opts[:metadata]
    puts metadata.url
