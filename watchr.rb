@@ -49,7 +49,7 @@ watch('test/helper\.rb') { run_all_tests }
 watch('test/test_.*\.rb') { run_all_tests }
 watch('lib/.*/.*\.rb') { run_all_tests }
 
-
+Signal.trap('QUIT') { run_all_tests  } # Ctrl-\
 
 # Ctrl-C
 Signal.trap 'INT' do
