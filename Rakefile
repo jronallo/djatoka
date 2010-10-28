@@ -13,6 +13,7 @@ begin
     gem.add_development_dependency "shoulda", ">= 0"
     #gem.add_development_dependency "ruby-debug", ">= 0"
     gem.add_development_dependency "hanna", ">= 0"
+    gem.add_development_dependency "fakeweb", ">= 0"
     gem.add_dependency "addressable", "2.1.2"
     gem.add_development_dependency "curb", ">= 0"
     gem.add_dependency "json", ">= 0"

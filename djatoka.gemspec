@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jason Ronallo"]
-  s.date = %q{2010-08-22}
+  s.date = %q{2010-10-28}
   s.default_executable = %q{djatoka_url}
   s.description = %q{The djatoka library provides some simple methods for creation of the OpenURLs needed to communicate with the Djatoka image server.}
   s.email = %q{jronallo@gmail.com}
@@ -51,13 +51,13 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{Djatoka image server helpers for Ruby and Rails.}
   s.test_files = [
-    "test/test_common.rb",
-     "test/test_region.rb",
-     "test/helper.rb",
-     "test/test_metadata.rb",
+    "test/test_metadata.rb",
+     "test/test_djatoka.rb",
      "test/test_resolver.rb",
      "test/test_view_helpers.rb",
-     "test/test_djatoka.rb"
+     "test/test_region.rb",
+     "test/helper.rb",
+     "test/test_common.rb"
   ]
 
   if s.respond_to? :specification_version then

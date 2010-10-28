@@ -60,11 +60,11 @@ module Djatoka::Common
     end
     # Here we try to compensate for when the dwtLevels does not match the
     # djatoka levels.
-    if metadata.dwt_levels.to_i > metadata.levels.to_i
-      best_level.to_i - 2
-    elsif metadata.dwt_levels.to_i == metadata.levels.to_i
+#    if metadata.dwt_levels.to_i > metadata.levels.to_i
+#      best_level.to_i - 2
+#    elsif metadata.dwt_levels.to_i == metadata.levels.to_i
       best_level.to_i
-    end
+#    end
   end
 
   private
@@ -88,13 +88,13 @@ module Djatoka::Common
         # we try to compensate for when there is a difference between the
         # dwtLevels and the djatoka levels. So far the only case seen is where
         # the dwtLevels are greater than the djatoka levels.
-        if metadata.dwt_levels.to_i > metadata.levels.to_i
-          difference = metadata.dwt_levels.to_i - metadata.levels.to_i
-          good_query_level = query.level.to_i + difference
+#        if metadata.dwt_levels.to_i > metadata.levels.to_i
+#          difference = metadata.dwt_levels.to_i - metadata.levels.to_i
+#          good_query_level = query.level.to_i + difference
         # dwtLevels in the cases seen so far almost always match the djatoka levels.
-        elsif metadata.dwt_levels.to_i == metadata.levels.to_i
+#        elsif metadata.dwt_levels.to_i == metadata.levels.to_i
           good_query_level = query.level.to_i
-        end
+#        end
         height = metadata.all_levels[good_query_level].height
         width = metadata.all_levels[good_query_level].width
       else

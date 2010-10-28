@@ -76,6 +76,19 @@ class TestDjatokaMetadata < Test::Unit::TestCase
                    "6"=>{"height"=>3372, "width"=>5120},}
         assert_equal levels, @levels
       end
+      should 'return appropriate height and width for all levels when levels and dwt_levels do not match' do
+        levels = {"0"=>{"height"=>57, "width"=>37},
+                  "1"=>{"height"=>114, "width"=>74},
+                  "2"=>{"height"=>228, "width"=>148},
+                  "3"=>{"height"=>457, "width"=>296},
+                  "4"=>{"height"=>915, "width"=>592}}
+        metadata = @resolver.metadata('ua023_015-006-bx0003-014-075').perform
+        returned_levels = metadata.all_levels
+        assert_equal levels, returned_levels
+
+      end
+      
+      
     end # levels
 
   end #with_a_resolver

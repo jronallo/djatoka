@@ -57,6 +57,17 @@ context 'A Djatoka Resolver' do
           assert_equal '513,0,4093,4093', @region.square.query.region
         end
       end
+      
+      context 'an image where the dwt_levels do not match the djatoka levels' do
+        setup do
+          @region2 = Djatoka::Region.new(@resolver, 'ua023_015-006-bx0003-014-075')
+        end
+        should 'be able to scale properly' do
+          @region2.scale('300').square
+          assert @region2.url
+        end
+      end
+      
     end
 
   end
