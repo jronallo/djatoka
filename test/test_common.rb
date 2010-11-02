@@ -30,7 +30,7 @@ context 'A Djatoka Resolver' do
         assert_equal '0,0,3372,3372', @region.top_left_square.query.region
       end
       should 'create a query for a right justified version of the image' do
-        assert_equal '0,1750,3372,3372', @region.bottom_right_square.query.region
+        assert_equal '0,1748,3372,3372', @region.bottom_right_square.query.region
       end
       should 'return a uri for a square version of the image' do
         assert_equal '0,874,3372,3372', @region.square_uri.query_values['svc.region']
