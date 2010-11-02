@@ -43,6 +43,25 @@ module Djatoka
       end
     end
 
+    # FIXME DRY
+    def djatoka_top_left_square_image_tag(rft_id, params={})
+      resolver, region = setup_djatoka_image_tag(rft_id, params)
+      if resolver and region
+        image_tag(region.square(:top_left).url, params) #+ debug(region)
+      else
+
+      end
+    end
+
+    def djatoka_bottom_right_square_image_tag(rft_id, params={})
+      resolver, region = setup_djatoka_image_tag(rft_id, params)
+      if resolver and region
+        image_tag(region.square(:bottom_right).url, params) #+ debug(region)
+      else
+
+      end
+    end
+
     # Returns an image tag for an image exactly 75x75
     #   djatoka_smallbox_image_tag('info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3')
     def djatoka_smallbox_image_tag(rft_id, params={})

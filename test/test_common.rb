@@ -80,8 +80,6 @@ context 'A Djatoka Resolver' do
         end
       end
 
-
-
     end
 
   end
