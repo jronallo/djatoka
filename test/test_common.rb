@@ -26,6 +26,12 @@ context 'A Djatoka Resolver' do
         assert_equal '0,874,3372,3372', @region.square.query.region
         assert_equal nil, @region.square.query.scale
       end
+      should 'create a query for a left justified version of the image' do
+        assert_equal '0,0,3372,3372', @region.top_left_square.query.region
+      end
+      should 'create a query for a right justified version of the image' do
+        assert_equal '0,1750,3372,3372', @region.bottom_right_square.query.region
+      end
       should 'return a uri for a square version of the image' do
         assert_equal '0,874,3372,3372', @region.square_uri.query_values['svc.region']
         assert_equal nil, @region.square_uri.query_values['svc.scale']
@@ -53,11 +59,17 @@ context 'A Djatoka Resolver' do
         setup do
           @region = Djatoka::Region.new(@resolver, 'info:lanl-repo/ds/b820f537-26a1-4af8-b86a-e7a4cac6187a')
         end
-        should 'crop appropriately into a square' do
+        should 'crop appropriately into a centered square' do
           assert_equal '513,0,4093,4093', @region.square.query.region
         end
+        should 'crop appropriately into a top justified square' do
+          assert_equal '0,0,4093,4093', @region.top_left_square.query.region
+        end
+        should 'crop appropriately into bottom justified square' do
+          assert_equal '1027,0,4093,4093', @region.bottom_right_square.query.region
+        end
       end
-      
+
       context 'an image where the dwt_levels do not match the djatoka levels' do
         setup do
           @region2 = Djatoka::Region.new(@resolver, 'ua023_015-006-bx0003-014-075')
@@ -67,7 +79,9 @@ context 'A Djatoka Resolver' do
           assert @region2.url
         end
       end
-      
+
+
+
     end
 
   end

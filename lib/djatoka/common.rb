@@ -30,7 +30,17 @@ module Djatoka::Common
 
   # public alias for #square_params. Returns self (a Djatoka::Region)
   def square
-    square_params
+    square_params(:center)
+    self
+  end
+
+  def top_left_square
+    square_params(:top_left)
+    self
+  end
+
+  def bottom_right_square
+    square_params(:bottom_right)
     self
   end
 
@@ -45,6 +55,10 @@ module Djatoka::Common
   def square_url
     square_uri.to_s
   end
+
+  # return a region as a square justified to the top-left of image.
+  # for a portrait image it will be justified to the top and for landscape it
+  # should be justified to the
 
   # So far we figure the best level to ask for based on any scale parameter and
   # try to compensate for any difference between the dwtLevels and djatoka levels
@@ -74,7 +88,7 @@ module Djatoka::Common
   # how djatoka determines levels. See the comments for the places where the code
   # tries to reconcile this difference in a way that seems to work in the cases
   # seen so far.
-  def square_params
+  def square_params(justify = :center)
     metadata = Djatoka::Metadata.new(resolver, rft_id).perform
     if metadata
       orig_height = metadata.height.to_i
@@ -85,16 +99,7 @@ module Djatoka::Common
         level(pick_best_level(metadata))
       end
       if query.level
-        # we try to compensate for when there is a difference between the
-        # dwtLevels and the djatoka levels. So far the only case seen is where
-        # the dwtLevels are greater than the djatoka levels.
-#        if metadata.dwt_levels.to_i > metadata.levels.to_i
-#          difference = metadata.dwt_levels.to_i - metadata.levels.to_i
-#          good_query_level = query.level.to_i + difference
-        # dwtLevels in the cases seen so far almost always match the djatoka levels.
-#        elsif metadata.dwt_levels.to_i == metadata.levels.to_i
-          good_query_level = query.level.to_i
-#        end
+        good_query_level = query.level.to_i
         height = metadata.all_levels[good_query_level].height
         width = metadata.all_levels[good_query_level].width
       else
@@ -105,18 +110,36 @@ module Djatoka::Common
       # height and width are relative to the level selected and one if not already
       # a square then the longest side is cropped.
       if height != width
-        if height > width
-          x = '0'
-          y = ((orig_height - orig_width)/2).to_s
+          # portrait
+          if height > width
+            h = width.to_s
+            w = width.to_s
+            if justify == :center
+              x = '0'
+              y = ((orig_height - orig_width)/2).to_s
+            elsif justify == :top_left
+              x = '0'
+              y = '0'
+            elsif justify == :bottom_right
+              x = '0'
+              y = (orig_height - orig_width).to_s
+            end
 
-          h = width.to_s
-          w = width.to_s
-        elsif width > height
-          y = '0'
-          x = ((orig_width - orig_height)/2).to_s
-          h = height.to_s
-          w = height.to_s
-        end
+          # landscape
+          elsif width > height
+            h = height.to_s
+            w = height.to_s
+            if justify == :center
+              y = '0'
+              x = ((orig_width - orig_height)/2).to_s
+            elsif justify == :top_left
+              x = '0'
+              y = '0'
+            elsif justify == :bottom_right
+              y = '0'
+              x = (orig_width - orig_height).to_s
+            end
+          end
         region([y,x,h,w])
       end
     end

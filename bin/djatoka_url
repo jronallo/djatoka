@@ -22,11 +22,13 @@ EOS
   opt :scale, "Scale", :type => String
   opt :format, 'Format', :type => String
   opt :clayer, 'clayer', :type => String
-  opt :square, 'Squares the image by cropping'
   opt :smallbox, 'Creates a 75x75 image'
   opt :metadata, 'Output metadata'
   opt :levels,   'Output Levels'
   opt :browser, 'Set the browser to open JSON and images with', :type => String
+  opt :square, 'Squares the image by cropping both sides'
+  opt :topleftsquare, 'Squares the image by justifying to the top left'
+  opt :bottomrightsquare, 'Squares the image by jutifying to the bottom right'
 end
 
 resolver = Djatoka::Resolver.new(opts[:resolver])
@@ -42,6 +44,14 @@ end
 
 if opts[:square]
   region.square
+end
+
+if opts[:topleftsquare]
+  region.top_left_square
+end
+
+if opts[:bottomrightsquare]
+  region.bottom_right_square
 end
 
 if opts[:metadata] or opts[:levels]
