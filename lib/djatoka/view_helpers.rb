@@ -47,7 +47,7 @@ module Djatoka
     def djatoka_top_left_square_image_tag(rft_id, params={})
       resolver, region = setup_djatoka_image_tag(rft_id, params)
       if resolver and region
-        image_tag(region.square(:top_left).url, params) #+ debug(region)
+        image_tag(region.top_left_square.url, params) #+ debug(region)
       else
 
       end
@@ -56,7 +56,7 @@ module Djatoka
     def djatoka_bottom_right_square_image_tag(rft_id, params={})
       resolver, region = setup_djatoka_image_tag(rft_id, params)
       if resolver and region
-        image_tag(region.square(:bottom_right).url, params) #+ debug(region)
+        image_tag(region.bottom_right_square.url, params) #+ debug(region)
       else
 
       end
