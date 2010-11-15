@@ -79,6 +79,16 @@ context 'A Djatoka Resolver' do
           assert @region2.url
         end
       end
+      
+      context 'an request for a non-existent image' do
+        setup do
+          @no_region = Djatoka::Region.new(@resolver, 'asdf')
+        end
+        should 'not raise when no metadata and trying to create a square at scale' do
+          @no_region.scale(300).square
+          assert @no_region.url
+        end
+      end
 
     end
 

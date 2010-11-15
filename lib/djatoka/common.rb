@@ -90,7 +90,11 @@ module Djatoka::Common
   # seen so far.
   def square_params(justify = :center)
     metadata = Djatoka::Metadata.new(resolver, rft_id).perform
-    if metadata
+    # since nil.to_i #=> 0 
+    # check that height and width are present otherwise our calculations will 
+    # fail and raise an error. We want to avoid that and would rather show a 
+    # broken image than raise--at least for now. 
+    if metadata.height and metadata.width 
       orig_height = metadata.height.to_i
       orig_width = metadata.width.to_i
       if query.scale and query.scale.split.length == 1
