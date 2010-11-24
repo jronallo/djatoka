@@ -3,6 +3,7 @@ $LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 require 'djatoka'
 require 'trollop'
 require 'pp'
+require 'open-uri'
 
 opts = Trollop::options do
   banner <<-EOS
@@ -30,6 +31,7 @@ EOS
   opt :topleftsquare, 'Squares the image by justifying to the top left'
   opt :bottomrightsquare, 'Squares the image by jutifying to the bottom right'
   opt :file, 'process a whole file of rtfids', :type => String
+  opt :download, 'download the image to the current working directory'
 end
 
 if (!opts[:rftid] and !opts[:file]) or (opts[:rftid] and opts[:file])
@@ -42,6 +44,7 @@ elsif opts[:file]
   Trollop::die :file, "File must exist" if !File.exists?(opts[:file])
   rftids = File.read(opts[:file]).split("\n")
 end
+
 
 resolver = Djatoka::Resolver.new(opts[:resolver])
 
@@ -89,5 +92,13 @@ rftids.each do |rftid|
   puts region.url unless opts[:file]
 
   `#{opts[:browser]} "#{region.url}"` if opts[:browser]
+  
+  if opts[:download]
+    puts 'downloading...'
+    image = open(region.url).read
+    File.open(rftid + '.jpg', 'w') do |fh|
+      fh.puts image
+    end
+  end
 end
 
