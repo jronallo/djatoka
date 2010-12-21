@@ -8,18 +8,18 @@ context 'A Djatoka Resolver' do
         @region = Djatoka::Region.new(@resolver, @identifier)
       end
       should 'create a query for a 75x75 version of the image' do
-        assert_equal '0,874,105,105', @region.smallbox.query.region
+        assert_equal '0,874,106,106', @region.smallbox.query.region
         assert_equal '75', @region.smallbox.query.scale
       end
 
       should 'return a String for a smallbox URL' do
         assert @region.smallbox_url.is_a? String
         assert @region.smallbox_url.include? 'http://african.lanl.gov'
-        assert @region.smallbox_url.include? 'svc.region=0%2C874%2C105%2C105'
+        assert @region.smallbox_url.include? 'svc.region=0%2C874%2C106%2C106'
       end
 
       should 'return a uri for a small square version of the image' do
-        assert_equal '0,874,105,105', @region.smallbox.uri.query_values['svc.region']
+        assert_equal '0,874,106,106', @region.smallbox.uri.query_values['svc.region']
       end
 
       should 'create a query for a square version of the image' do

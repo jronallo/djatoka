@@ -56,20 +56,24 @@ class Djatoka::Metadata
   def all_levels
     perform if !response # if we haven't already performed the metadata query do it now
     levels_hash = Hashie::Mash.new
-    levels_i = levels.to_i
+    levels_i = levels.to_i 
     (0..levels_i).each do |level_num|
       level_height = height.to_i
       level_width = width.to_i
 
       times_to_halve = levels_i - level_num
       times_to_halve.times do
-        level_height = level_height / 2
-        level_width = level_width / 2
+        level_height = (level_height / 2.0).round
+        level_width = (level_width / 2.0).round
       end
 
       levels_hash[level_num] = {:height => level_height, :width => level_width}
     end
     levels_hash
+  end
+    
+  def max_level
+    all_levels.keys.sort.last  
   end
 
 end

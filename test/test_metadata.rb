@@ -66,28 +66,34 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         @metadata = @metadata_obj.perform
         @levels = @metadata.all_levels
       end
+      should 'create the number of metadata levels as djatoka provides' do
+        assert_equal 7, @levels.length
+      end
       should 'return height and width for all levels' do
-        levels = { "0"=>{"height"=>52, "width"=>80},
-                   "1"=>{"height"=>105, "width"=>160},
-                   "2"=>{"height"=>210, "width"=>320},
-                   "3"=>{"height"=>421, "width"=>640},
+        expected_levels = { "0"=>{"height"=>53, "width"=>80},
+                   "1"=>{"height"=>106, "width"=>160},
+                   "2"=>{"height"=>211, "width"=>320},
+                   "3"=>{"height"=>422, "width"=>640},
                    "4"=>{"height"=>843, "width"=>1280},
                    "5"=>{"height"=>1686, "width"=>2560},
-                   "6"=>{"height"=>3372, "width"=>5120},}
-        assert_equal levels, @levels
+                   "6"=>{"height"=>3372, "width"=>5120}}
+        assert_equal expected_levels, @levels
       end
+      should 'know which is the max level' do
+        assert_equal "6", @metadata.max_level
+      end
+      
       should 'return appropriate height and width for all levels when levels and dwt_levels do not match' do
-        levels = {"0"=>{"height"=>57, "width"=>37},
-                  "1"=>{"height"=>114, "width"=>74},
-                  "2"=>{"height"=>228, "width"=>148},
-                  "3"=>{"height"=>457, "width"=>296},
+        levels = {"0"=>{"height"=>58, "width"=>37},
+                  "1"=>{"height"=>115, "width"=>74},
+                  "2"=>{"height"=>229, "width"=>148},
+                  "3"=>{"height"=>458, "width"=>296},
                   "4"=>{"height"=>915, "width"=>592}}
         metadata = @resolver.metadata('ua023_015-006-bx0003-014-075').perform
         returned_levels = metadata.all_levels
         assert_equal levels, returned_levels
 
       end
-      
       
     end # levels
 
