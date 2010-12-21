@@ -64,7 +64,7 @@ module Djatoka::Common
   # try to compensate for any difference between the dwtLevels and djatoka levels
   # so that we get a decent image returned.
   def pick_best_level(metadata)
-    best_level = '10'
+    best_level = metadata.max_level
     metadata_levels = metadata.all_levels
     metadata_levels.keys.sort.reverse.each do |k|
        if metadata_levels[k].height.to_i > query.scale.to_i and
