@@ -15,8 +15,8 @@ class TestDjatokaMetadata < Test::Unit::TestCase
       should "create a metadata URL for an identifier" do
         assert @metadata.url.include? 'http://african.lanl.gov/adore-djatoka/resolver?'
         assert @metadata.url.include? 'url_ver=Z39.88-2004'
-        assert @metadata.url.include? '&svc_id=info%3Alanl-repo%2Fsvc%2FgetMetadata'
-        assert @metadata.url.include? '&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3'
+        assert @metadata.url.include? 'svc_id=info%3Alanl-repo%2Fsvc%2FgetMetadata'
+        assert @metadata.url.include? 'rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3'
       end
 
       should 'create a metadata uri for an identifier' do
