@@ -22,7 +22,7 @@ module Djatoka
     def djatoka_image_tag(rft_id, params={})
       resolver, region = setup_djatoka_image_tag(rft_id, params)
       if resolver and region
-        image_tag region.url, params
+        image_tag region.url, clean_image_tag_params(params)
       else
 
       end
@@ -37,7 +37,7 @@ module Djatoka
     def djatoka_square_image_tag(rft_id, params={})
       resolver, region = setup_djatoka_image_tag(rft_id, params)
       if resolver and region
-        image_tag(region.square.url, params) #+ debug(region)
+        image_tag(region.square.url, clean_square_image_tag_params(params)) #+ debug(region)
       else
 
       end
@@ -47,7 +47,7 @@ module Djatoka
     def djatoka_top_left_square_image_tag(rft_id, params={})
       resolver, region = setup_djatoka_image_tag(rft_id, params)
       if resolver and region
-        image_tag(region.top_left_square.url, params) #+ debug(region)
+        image_tag(region.top_left_square.url, clean_square_image_tag_params(params)) #+ debug(region)
       else
 
       end
@@ -56,7 +56,7 @@ module Djatoka
     def djatoka_bottom_right_square_image_tag(rft_id, params={})
       resolver, region = setup_djatoka_image_tag(rft_id, params)
       if resolver and region
-        image_tag(region.bottom_right_square.url, params) #+ debug(region)
+        image_tag(region.bottom_right_square.url, clean_square_image_tag_params(params)) #+ debug(region)
       else
 
       end
@@ -67,7 +67,7 @@ module Djatoka
     def djatoka_smallbox_image_tag(rft_id, params={})
       resolver, region = setup_djatoka_image_tag(rft_id, params)
       if resolver and region
-        image_tag region.smallbox.url, params
+        image_tag region.smallbox.url, clean_square_image_tag_params(params)
       else
 
       end
@@ -102,7 +102,11 @@ module Djatoka
     def setup_djatoka_image_tag(rft_id, params)
       resolver = determine_resolver(params)
       if resolver
+        metadata = Djatoka::Metadata.new(resolver, rft_id).perform
         region = Djatoka::Region.new(resolver, rft_id, params)
+        level = region.pick_best_level(metadata)
+        region.level level
+        region.query.delete(:scale)
         return resolver, region
       else
       end
@@ -118,6 +122,24 @@ module Djatoka
       else
         nil
       end
+    end
+    
+    def clean_image_tag_params(params)
+      new_params = params.dup
+      if new_params[:scale]         
+        new_params.delete(:scale)
+      end
+      new_params
+    end
+    
+    def clean_square_image_tag_params(params)
+      new_params = params.dup
+      if new_params[:scale]        
+        new_params[:height] = new_params[:scale] unless new_params[:height]        
+        new_params[:width]  = new_params[:scale] unless new_params[:width]
+        new_params.delete(:scale)
+      end
+      new_params
     end
 
   end
