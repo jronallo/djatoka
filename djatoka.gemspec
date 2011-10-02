@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{djatoka}
-  s.version = "0.0.12"
+  s.version = "0.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jason Ronallo"]
-  s.date = %q{2011-08-02}
+  s.date = %q{2011-10-02}
   s.default_executable = %q{djatoka_url}
   s.description = %q{The djatoka library provides some simple methods for creation of the OpenURLs needed to communicate with the Djatoka image server.}
   s.email = %q{jronallo@gmail.com}
