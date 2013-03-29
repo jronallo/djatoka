@@ -20,11 +20,10 @@ Gem::Specification.new do |s|
   s.add_dependency "addressable"
   s.add_dependency "hashie"
   s.add_dependency "json"
-  s.add_dependency "curb"
+  
   s.add_dependency "trollop"
 
   s.add_development_dependency "mocha"
-  s.add_development_dependency "curb"
   s.add_development_dependency "fakeweb"
   s.add_development_dependency "shoulda"
 end

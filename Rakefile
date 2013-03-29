@@ -23,11 +23,8 @@ end
 
 task :default => :test
 
-begin
-  require 'hanna/rdoctask'
-rescue LoadError
-  require 'rdoc/task'
-end
+require 'rdoc/task'
+
 Rake::RDocTask.new do |rdoc|
   version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
