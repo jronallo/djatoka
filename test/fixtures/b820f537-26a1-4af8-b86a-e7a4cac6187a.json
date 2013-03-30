@@ -1,0 +1,16 @@
+HTTP/1.1 200 OK
+Date: Sat, 30 Mar 2013 00:56:24 GMT
+Server: Apache
+Set-Cookie: JSESSIONID=086B6175C0316D0303537438B30FDD0F; Path=/adore-djatoka
+Connection: close
+Content-Type: application/json
+
+{
+"identifier": "info:lanl-repo/ds/b820f537-26a1-4af8-b86a-e7a4cac6187a",
+"imagefile": "/lanl/data/loc/cc5fc4f7-e50a-455f-b3ce-a6a8b54824e6/VQCPNSNDKZKKNBTISHN6MJ6WGSQFNZKP.jp2",
+"width": "4093",
+"height": "5120",
+"dwtLevels": "6",
+"levels": "6",
+"compositingLayerCount": "1"
+}

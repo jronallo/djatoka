@@ -1,0 +1,11 @@
+HTTP/1.1 200 OK
+Date: Sat, 30 Mar 2013 01:16:37 GMT
+Server: Apache
+Set-Cookie: JSESSIONID=41D9E6B865CE04849F262F9FD8AE0FDF; Path=/adore-djatoka
+Connection: close
+Content-Type: application/json
+
+{
+"identifier": "info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3",
+"status": "OK"
+}

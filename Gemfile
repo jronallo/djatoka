@@ -4,3 +4,4 @@ gemspec
 
 gem 'rdoc', ">= 2.4.2"
 gem 'rake'
+gem 'pry'

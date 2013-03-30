@@ -76,7 +76,7 @@ class Djatoka::Resolver
   private
 
   def ping_url_template
-    Addressable::Template.new("#{base_url}?url_ver=Z39.88-2004&svc_id=info:lanl-repo/svc/ping&rft_id={rft_id}")
+    Addressable::Template.new("#{base_url}?url_ver=Z39.88-2004&svc_id=info%3Alanl-repo%2Fsvc%2Fping&rft_id={rft_id}")
   end
 
 end
