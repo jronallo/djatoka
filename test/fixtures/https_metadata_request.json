@@ -1,0 +1,16 @@
+HTTP/1.1 200 OK
+Date: Mon, 08 Apr 2013 19:00:52 GMT
+Server: Apache-Coyote/1.1
+Content-Type: application/json
+Content-Length: 169
+Set-Cookie: JSESSIONID=6E14483BD6783720ED2AEE04519A1AF7; Path=/adore-djatoka/; HttpOnly
+
+{
+"identifier": "0004817",
+"imagefile": "/storage/00048/0004817.jp2",
+"width": "7575",
+"height": "10669",
+"dwtLevels": "7",
+"levels": "7",
+"compositingLayerCount": "1"
+}

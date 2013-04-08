@@ -11,7 +11,15 @@ module Djatoka::Net
       c.perform
     else
       uri = URI.parse(url)
-      response = Net::HTTP.get_response(uri)
+      if uri.scheme == 'https'
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        request = Net::HTTP::Get.new(uri.request_uri)
+        response = http.request(request)
+      else
+        response = Net::HTTP.get_response(uri)
+      end
       case response
       when Net::HTTPSuccess
         data = JSON.parse(response.body)

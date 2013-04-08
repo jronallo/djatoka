@@ -60,6 +60,16 @@ class TestDjatokaMetadata < Test::Unit::TestCase
       end
     end
 
+    context 'using net::https' do 
+      should 'get metadata when using an https URI' do 
+        Djatoka.use_curb=false
+        resolver = Djatoka::Resolver.new('https://scrc.lib.ncsu.edu/adore-djatoka/resolver')
+        metadata_obj = resolver.metadata('0004817')
+        metadata = metadata_obj.perform
+        assert_equal('10669', metadata.height)
+      end 
+    end
+
     context 'determining all the levels for a particular metadata response' do
       setup do
         @metadata_obj = @resolver.metadata(@identifier)

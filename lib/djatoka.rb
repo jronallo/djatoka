@@ -50,6 +50,7 @@ rescue LoadError
 end
 
 require 'net/http'
+require 'net/https'
 require 'uri'
 
 require 'djatoka/net'

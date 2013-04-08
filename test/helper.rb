@@ -53,3 +53,6 @@ FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?rft_i
 
 FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?url_ver=Z39.88-2004&svc_id=info%3Alanl-repo%2Fsvc%2Fping&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3",
   :response => File.read('test/fixtures/ping-5aa182c2-c092-4596-af6e-e95d2e263de3.json'))
+
+FakeWeb.register_uri(:get, "https://scrc.lib.ncsu.edu/adore-djatoka/resolver?rft_id=0004817&svc_id=info%3Alanl-repo%2Fsvc%2FgetMetadata&url_ver=Z39.88-2004",
+  :response => File.read('test/fixtures/https_metadata_request.json'))
