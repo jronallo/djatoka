@@ -3,12 +3,13 @@
 # and Djatoka::Metadata objects.
 class Djatoka::Resolver
   include Djatoka::Net
-  attr_accessor :base_url, :host, :path, :port
+  attr_accessor :base_url, :scheme, :host, :path, :port
 
   def initialize(base_url='http://african.lanl.gov/adore-djatoka/resolver')
     #if base_url.to_s =~ /(^$)|(^(http|https):\/\/[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(([0-9]{1,5})?\/.*)?$)/ix
       uri = Addressable::URI.parse(base_url)
       @base_url = uri.to_s
+      @scheme = uri.scheme
       @host = uri.host
       @path = uri.path
       @port = uri.port
@@ -63,7 +64,7 @@ class Djatoka::Resolver
   end
 
   def base_uri_params
-    params = {:host => host, :path => path, :scheme => 'http'}
+    params = {:host => host, :path => path, :scheme => scheme}
     params[:port] = port if port
     params
   end

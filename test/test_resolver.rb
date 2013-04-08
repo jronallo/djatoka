@@ -65,6 +65,7 @@ class TestDjatokaResolver < Test::Unit::TestCase
         @resolver_port = Djatoka::Resolver.new('http://example.com:8080/adore-djatoka/resolver')
       end
       should 'hold good uri data' do
+        assert_equal('http', @resolver_port.scheme)
         assert_equal 'example.com', @resolver_port.host
         assert_equal 8080, @resolver_port.port
         assert_equal '/adore-djatoka/resolver', @resolver_port.path
@@ -82,6 +83,18 @@ class TestDjatokaResolver < Test::Unit::TestCase
         assert_equal 'http://example.com:8080/adore-djatoka/resolver', @resolver_port.url
       end
     end #context: resolver with a port number
+
+    context 'a resolver with an https scheme' do
+      setup do
+        @resolver_https = Djatoka::Resolver.new('https://example.com:8080/adore-djatoka/resolver')
+      end
+      should 'hold good uri data' do
+        assert_equal 'example.com', @resolver_https.host
+        assert_equal 8080, @resolver_https.port
+        assert_equal '/adore-djatoka/resolver', @resolver_https.path
+        assert_equal('https', @resolver_https.scheme)
+      end
+    end
 
   end #with_a_resolver
 end
