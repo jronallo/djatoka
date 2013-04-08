@@ -2,6 +2,7 @@ require 'rubygems'
 require 'test/unit'
 require 'shoulda'
 require 'fakeweb'
+require 'pry'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
@@ -41,3 +42,14 @@ FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?rft_i
   
 FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?rft_id=asdf&svc_id=info%3Alanl-repo%2Fsvc%2FgetMetadata&url_ver=Z39.88-2004",
   :response => File.read('test/fixtures/empty-metadata.json'))
+FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?url_ver=Z39.88-2004&svc_id=info%3Alanl-repo%2Fsvc%2Fping&rft_id=asdf",
+  :response => File.read('test/fixtures/ping-asdf.json'))
+
+FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?rft_id=info%3Alanl-repo%2Fds%2Fb820f537-26a1-4af8-b86a-e7a4cac6187a&svc_id=info%3Alanl-repo%2Fsvc%2FgetMetadata&url_ver=Z39.88-2004",
+  :response => File.read('test/fixtures/b820f537-26a1-4af8-b86a-e7a4cac6187a.json'))
+
+FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3&svc_id=info%3Alanl-repo%2Fsvc%2FgetMetadata&url_ver=Z39.88-2004",
+  :response => File.read('test/fixtures/5aa182c2-c092-4596-af6e-e95d2e263de3.json'))
+
+FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?url_ver=Z39.88-2004&svc_id=info%3Alanl-repo%2Fsvc%2Fping&rft_id=info%3Alanl-repo%2Fds%2F5aa182c2-c092-4596-af6e-e95d2e263de3",
+  :response => File.read('test/fixtures/ping-5aa182c2-c092-4596-af6e-e95d2e263de3.json'))

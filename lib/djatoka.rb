@@ -58,7 +58,6 @@ require 'djatoka/metadata'
 require 'djatoka/common'
 require 'djatoka/region'
 
-require 'rubygems'
 require 'addressable/uri'
 require 'addressable/template'
 require 'json'
