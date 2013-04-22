@@ -58,6 +58,7 @@ require 'djatoka/resolver'
 require 'djatoka/metadata'
 require 'djatoka/common'
 require 'djatoka/region'
+require 'djatoka/iiif_request'
 
 require 'addressable/uri'
 require 'addressable/template'

@@ -1,10 +1,11 @@
 PATH
   remote: .
   specs:
-    djatoka (0.2.0)
+    djatoka (0.2.2)
       addressable
       hashie
       json
+      mime-types
       trollop
 
 GEM
@@ -13,7 +14,7 @@ GEM
     activesupport (3.2.13)
       i18n (= 0.6.1)
       multi_json (~> 1.0)
-    addressable (2.3.3)
+    addressable (2.3.4)
     bourne (1.4.0)
       mocha (~> 0.13.2)
     coderay (1.0.9)
@@ -25,6 +26,7 @@ GEM
     json (1.7.7-java)
     metaclass (0.0.1)
     method_source (0.8.1)
+    mime-types (1.22)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
     multi_json (1.7.2)
