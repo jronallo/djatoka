@@ -32,17 +32,142 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
       context 'translates region paramaters' do
         setup do
-          @reg = @req.region('10,20,50,100').size('').rotation('0').quality('native').format('jpg').djatoka_region
+          @req.size('full').rotation('0').quality('native').format('jpg')
         end
 
         should 'set x,y,w,h requests' do
-          assert_equal '20,10,100,50', @reg.query.region
+          reg = @req.region('10,20,50,100').djatoka_region
+          assert_equal '20,10,100,50', reg.query.region
+        end
+
+        should 'raise an exception if the region does not fit the x,y,w,h format, or is not "full"' do
+          assert_raise Djatoka::IiifInvalidParam do
+            @req.region('blah').djatoka_region
+          end
         end
       end
 
+      context 'translates size paramaters' do
+        setup do
+          @req.region('10,20,50,100').rotation('0').quality('native').format('jpg')
+        end
+
+        should 'set "w," requests to the correct scale value' do
+          reg = @req.size('800,').djatoka_region
+          assert_equal '800,0', reg.query.scale
+        end
+
+        should 'set ",h" requests to the correct scale value' do
+          reg = @req.size(',900').djatoka_region
+          assert_equal '0,900', reg.query.scale
+        end
+
+        should 'set "pct:n" requests to the correct scale value' do
+          reg = @req.size('pct:75').djatoka_region
+          assert_equal '0.75', reg.query.scale
+
+          reg = @req.size('pct:125').djatoka_region
+          assert_equal '1.25', reg.query.scale
+        end
+
+        should 'set "w,h" requests to the correct scale value' do
+          reg = @req.size('1024,768').djatoka_region
+          assert_equal '1024,768', reg.query.scale
+        end
+
+        should 'raise an exception if the value cannot be parsed into a Float' do
+          assert_raise Djatoka::IiifInvalidParam do
+            @req.size('pct:0.75').djatoka_region
+          end
+        end
+
+      end
+
+      context 'translates rotation paramaters' do
+        setup do
+          @req.region('10,20,50,100').size('800,').quality('native').format('jpg')
+        end
+
+        should 'set values that are numeric' do
+          reg = @req.rotation('90').djatoka_region
+          assert_equal '90', reg.query.rotate
+
+          reg = @req.rotation('270').djatoka_region
+          assert_equal '270', reg.query.rotate
+        end
+
+        should 'raise an exception if the value is not numeric' do
+          assert_raise Djatoka::IiifInvalidParam do
+            @req.rotation('blah').djatoka_region
+          end
+        end
+      end
+
+      context 'translates format paramaters' do
+        setup do
+          @req.region('full').size('full').rotation('0').quality('native')
+        end
+
+        should 'set the format from a valid extension as from the end of a URL' do
+          reg = @req.format('image.png').djatoka_region
+          assert_equal 'image/png', reg.query.format
+        end
+
+        should 'set the format from a valid mime-type as from the "Accept:" HTTP header' do
+          reg = @req.format('image/tiff').djatoka_region
+          assert_equal 'image/tiff', reg.query.format
+        end
+
+        should 'raise an exception if the value is not a valid mime type extension' do
+          assert_raise Djatoka::IiifInvalidParam do
+            @req.format('nobody').djatoka_region
+          end
+        end
+
+        should 'raise an exception if the value is not a valid mime type value' do
+          assert_raise Djatoka::IiifInvalidParam do
+            @req.format('image/blahtype').djatoka_region
+          end
+        end
+      end
+
+      context 'validates quaility paramaters' do
+        setup do
+          @req.region('full').size('full').rotation('0').format('jpg')
+        end
+
+        should 'not raise when the quality is valid' do
+          assert_nothing_raised do
+            @req.quality('color').djatoka_region
+          end
+        end
+
+        should 'raise an exception when the quality is invalid' do
+          assert_raise Djatoka::IiifInvalidParam do
+            @req.quality('3d').djatoka_region
+          end
+        end
+      end
+
+      context '#all_params_present?' do
+        should 'return true when all the valid params have been set' do
+          @req.region('full').size('full').rotation('0').quality('native').format('jpg')
+          assert @req.all_params_present?
+        end
+
+        should 'return false when params are missing' do
+          @req.region('full').size('full').quality('native').format('jpg')
+          assert_equal false, @req.all_params_present?
+        end
+      end
+
+      context '#djatoka_region' do
+        should 'raise a IiifException if a required param is missing from the request' do
+          assert_raise Djatoka::IiifException do
+            @req.size('800,').djatoka_region
+          end
+        end
+      end
     end #context
-
   end #with_a_resolver
-
 end
-
