@@ -21,5 +21,7 @@ pkg
 ## PROJECT::SPECIFIC
 .redcar
 .rvmrc
+.ruby-gemset
+.ruby-version
 
 .rbx
