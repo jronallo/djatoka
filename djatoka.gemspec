@@ -6,8 +6,8 @@
 Gem::Specification.new do |s|
   s.name = %q{djatoka}
   s.version = "0.2.2"
-  s.authors = ["Jason Ronallo"]
-  s.email = %q{jronallo@gmail.com}
+  s.authors = ["Jason Ronallo", "Willy Mene"]
+  s.email = %q{jronallo@gmail.com wmene@stanford.edu}
   s.homepage = %q{http://github.com/jronallo/djatoka}
   s.summary = %q{Djatoka image server helpers for Ruby and Rails.}
   s.description = %q{The djatoka library provides some simple methods for creation of the OpenURLs needed to communicate with the Djatoka image server.}
