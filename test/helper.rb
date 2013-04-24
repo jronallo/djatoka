@@ -3,6 +3,7 @@ require 'test/unit'
 require 'shoulda'
 require 'fakeweb'
 require 'pry'
+require 'equivalent-xml'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
@@ -39,7 +40,7 @@ end
 
 FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?rft_id=ua023_015-006-bx0003-014-075&svc_id=info%3Alanl-repo%2Fsvc%2FgetMetadata&url_ver=Z39.88-2004",
   :response => File.read('test/fixtures/ua023_015-006-bx0003-014-075-metadata.json'))
-  
+
 FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?rft_id=asdf&svc_id=info%3Alanl-repo%2Fsvc%2FgetMetadata&url_ver=Z39.88-2004",
   :response => File.read('test/fixtures/empty-metadata.json'))
 FakeWeb.register_uri(:get, "http://african.lanl.gov/adore-djatoka/resolver?url_ver=Z39.88-2004&svc_id=info%3Alanl-repo%2Fsvc%2Fping&rft_id=asdf",

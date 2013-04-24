@@ -60,14 +60,14 @@ class TestDjatokaMetadata < Test::Unit::TestCase
       end
     end
 
-    context 'using net::https' do 
-      should 'get metadata when using an https URI' do 
+    context 'using net::https' do
+      should 'get metadata when using an https URI' do
         Djatoka.use_curb=false
         resolver = Djatoka::Resolver.new('https://scrc.lib.ncsu.edu/adore-djatoka/resolver')
         metadata_obj = resolver.metadata('0004817')
         metadata = metadata_obj.perform
         assert_equal('10669', metadata.height)
-      end 
+      end
     end
 
     context 'determining all the levels for a particular metadata response' do
@@ -92,7 +92,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
       should 'know which is the max level' do
         assert_equal "6", @metadata.max_level
       end
-      
+
       should 'return appropriate height and width for all levels when levels and dwt_levels do not match' do
         levels = {"0"=>{"height"=>58, "width"=>37},
                   "1"=>{"height"=>115, "width"=>74},
@@ -104,10 +104,85 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         assert_equal levels, returned_levels
 
       end
-      
+
     end # levels
+
+    context 'IIIF Image Information Requests' do
+      setup do
+        @metadata_obj = @resolver.metadata(@identifier)
+        @metadata = @metadata_obj.perform
+      end
+
+      should 'create json responses' do
+        iiif_json = <<-EOF
+        {
+          "identifier": "info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3",
+          "width": 5120,
+          "height": 3372,
+          "scale_factors": [ 0,1,2,3,4,5,6 ],
+          "tile_width": 512,
+          "tile_height": 512,
+          "formats": [ "jpg", "png" ],
+          "qualities": [ "native", "grey" ],
+          "profile": "http://library.stanford.edu/iiif/image-api/compliance.html#level1",
+          "image_host": "http://myserver.com/image"
+        }
+        EOF
+        expected = JSON.parse(iiif_json)
+
+        str = @metadata.to_iiif_json do |info|
+            info.tile_width   = '512'
+            info.tile_height  = 512   # tile_* can be string or int
+            info.formats      = ['jpg', 'png']
+            info.qualities    = ['native', 'grey']
+            info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
+            info.image_host   = 'http://myserver.com/image'
+        end
+        assert_equal expected, JSON.parse(str)
+      end
+
+      should 'create xml responses' do
+        iiif_xml =<<-EOXML
+        <info xmlns="http://library.stanford.edu/iiif/image-api/ns/">
+          <identifier>info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3</identifier>
+          <width>5120</width>
+          <height>3372</height>
+          <scale_factors>
+            <scale_factor>0</scale_factor>
+            <scale_factor>1</scale_factor>
+            <scale_factor>2</scale_factor>
+            <scale_factor>3</scale_factor>
+            <scale_factor>4</scale_factor>
+            <scale_factor>5</scale_factor>
+            <scale_factor>6</scale_factor>
+          </scale_factors>
+          <tile_width>512</tile_width>
+          <tile_height>512</tile_height>
+          <formats>
+            <format>jpg</format>
+            <format>png</format>
+          </formats>
+          <qualities>
+            <quality>native</quality>
+            <quality>grey</quality>
+          </qualities>
+          <profile>http://library.stanford.edu/iiif/image-api/compliance.html#level1</profile>
+          <image_host>http://myserver.com/image</image_host>
+        </info>
+        EOXML
+
+        str = @metadata.to_iiif_xml do |info|
+            info.tile_width   = '512'
+            info.tile_height  = 512   # tile_* can be string or int
+            info.formats      = ['jpg', 'png']
+            info.qualities    = ['native', 'grey']
+            info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
+            info.image_host   = 'http://myserver.com/image'
+        end
+        assert EquivalentXml.equivalent?(str, iiif_xml)
+      end
+    end #IIIF Info Responses
 
   end #with_a_resolver
 
 end
-
