@@ -1,5 +1,3 @@
-require 'mime/types'
-require 'set'
 
 # For rotation param testing.  Allows you to do the following with String:
 #  '123.456'.numeric? => true
@@ -9,17 +7,6 @@ class String
     true if Float(self) rescue false
   end
 end
-
-
-# Classes that aid in the translation of International Image Interoperability Framework (IIIF) paramaters into Djatoka requests.
-# See {this page}[http://www-sul.stanford.edu/iiif/image-api/#size] for documentation on the IIIF API
-#
-# Usage example:
-#   resolver = Djatoka::Resolver.new('http://server.edu/adore-djatoka/resolver')
-#   id = 'someImageId1234'
-#
-#   request = Djatoka::IiifRequest.new(resolver, id)
-#   djatoka_region = request.region('full').size('full').rotation('0').quality('native').format('jpg').djatoka_region
 
 module Djatoka
 
@@ -38,11 +25,21 @@ module Djatoka
 
   end
 
-  # A class for translating IIIF paramaters into a Djatoka::Region object
-  # It behaves like the Djatoka::Region object, in that you can chain methods together when setting params.
-  # Once you've set all the params, call #djatoka_region to translate the paramaters.  Validation of
-  # values occurs in this method, and a Djatoka::IiifInvalidParam exception is raised if any of the values
-  # are invalid.
+  #  A class for translating IIIF parameters into a Djatoka::Region object.
+  #
+  #  * See the {documentation for the IIIF API}[http://www-sul.stanford.edu/iiif/image-api/#size]
+  #
+  #  It behaves like the Djatoka::Region object, in that you can chain methods together when setting params.
+  #  Once you've set all the params, call #djatoka_region to translate the parameters.  Validation of
+  #  values occurs in this method, and a Djatoka::IiifInvalidParam exception is raised if any of the values
+  #  are invalid.
+  #
+  #  *  Usage example
+  #   resolver = Djatoka::Resolver.new('http://server.edu/adore-djatoka/resolver')
+  #   id = 'someImageId1234'
+  #
+  #   request = Djatoka::IiifRequest.new(resolver, id)
+  #   djatoka_region = request.region('full').size('full').rotation('0').quality('native').format('jpg').djatoka_region
   class IiifRequest
 
     ALL_PARAMS = Set.new(['region', 'size', 'rotation', 'quality', 'format'])
@@ -50,18 +47,19 @@ module Djatoka
     attr_accessor :iiif_params
 
     # You can set the params for the request in 2 ways:
-    # 1) pass in params as a hash with the IIIF paramaters {:id => 'some/id', :region => 'full'...}
-    # 2) do not pass in params, and use the chain methods to set each value
+    # 1. Pass in params as a hash with the IIIF parameters {:id => 'some/id', :region => 'full'...}
+    # 2. Do not pass in params, and use the chain methods to set each value
     def initialize(resolver, id, params = nil)
       @id = id
       @resolver = resolver
+      @iiif_params = Hashie::Mash.new
+
       if(!params.nil? && params.is_a?(Hash))
         params.keys.each do |k|
-          self.call("k", params[k])
+          self.send("#{k}", params[k])
         end
       end
       # else, params is nil, the caller will set each value
-      @iiif_params = Hashie::Mash.new
     end
 
     def id(v)
@@ -133,7 +131,7 @@ module Djatoka
         raise IiifInvalidParam.new "size", s
       end
 
-      if(@iiif_params[:rotation] && !(@iiif_params[:rotation].numeric?))
+      unless(@iiif_params[:rotation].numeric?)
         raise IiifInvalidParam.new "rotation", @iiif_params[:rotation]
       end
       region.rotate(@iiif_params[:rotation])

@@ -52,6 +52,7 @@ end
 require 'net/http'
 require 'net/https'
 require 'uri'
+require 'set'
 
 require 'djatoka/net'
 require 'djatoka/resolver'
@@ -63,7 +64,9 @@ require 'djatoka/iiif_request'
 require 'addressable/uri'
 require 'addressable/template'
 require 'json'
+require 'nokogiri'
 require 'hashie'
+require 'mime/types'
 
 
 if defined? Rails

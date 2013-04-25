@@ -1,8 +1,5 @@
 # A class for retrieving metadata on a particular image.
 # See the Djatoka documentation on the {getMetadata service}[http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Djatoka_OpenURL_Services#info:lanl-repo.2Fsvc.2FgetMetadata]
-require 'json'
-require 'nokogiri'
-
 class Djatoka::Metadata
   attr_accessor :rft_id, :identifier, :imagefile, :width, :height, :dwt_levels,
     :levels, :layer_count, :response, :resolver
@@ -75,29 +72,26 @@ class Djatoka::Metadata
     levels_hash
   end
 
-  # Just the levels themselves, as a sorted array of integers
-  def levels_as_i
-    all_levels.keys.map{ |l| l.to_i}.sort
-  end
-
   def max_level
     all_levels.keys.sort.last
   end
 
   # Builds a String containing the JSON response to a IIIF Image Information Request
-  # {Documentation about the Image Info Request}[http://www-sul.stanford.edu/iiif/image-api/#info]
+  #
+  # * {Documentation about the Image Info Request}[http://www-sul.stanford.edu/iiif/image-api/#info]
+  #
   # It will fill in the required fields of identifier, width, and height.  It will also fill in
-  # the scale_factors as determined from Djatoka levels.
+  # the scale_factors as determined from Djatoka::Metadata#levels
   # The method yields a Mash where you can set the value of the optional fields.  Here's an example:
   #
-  # metadata.to_iiif_json do |info|
-  #   info.tile_width   = 512
-  #   info.tile_height  = 512
-  #   info.formats      = ['jpg', 'png']
-  #   info.qualities    = ['native', 'grey']
-  #   info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
-  #   info.image_host   = 'http://myserver.com/image'
-  # end
+  #   metadata.to_iiif_xml do |info|
+  #     info.tile_width   = 512
+  #     info.tile_height  = 512
+  #     info.formats      = ['jpg', 'png']
+  #     info.qualities    = ['native', 'grey']
+  #     info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
+  #     info.image_host   = 'http://myserver.com/image'
+  #   end
   def to_iiif_json(&block)
      info = Hashie::Mash.new
      info.identifier =  @rft_id
@@ -113,20 +107,22 @@ class Djatoka::Metadata
      JSON.pretty_generate(info)
   end
 
-  # Builds an xml document containing the response to a IIIF Image Information Request
-  # {Documentation about the Image Info Request}[http://www-sul.stanford.edu/iiif/image-api/#info]
+  # Builds a String containing the xml response to a IIIF Image Information Request
+  #
+  # * {Documentation about the Image Info Request}[http://www-sul.stanford.edu/iiif/image-api/#info]
+  #
   # It will fill in the required fields of identifier, width, and height.  It will also fill in
-  # the scale_factors as determined from Djatoka levels.
+  # the scale_factors as determined from Djatoka::Metadata#levels
   # The method yields a Mash where you can set the values of the optional fields.  Here's an example:
   #
-  # metadata.to_iiif_json do |info|
-  #   info.tile_width   = 512
-  #   info.tile_height  = 512
-  #   info.formats      = ['jpg', 'png']
-  #   info.qualities    = ['native', 'grey']
-  #   info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
-  #   info.image_host   = 'http://myserver.com/image'
-  # end
+  #   metadata.to_iiif_json do |info|
+  #     info.tile_width   = 512
+  #     info.tile_height  = 512
+  #     info.formats      = ['jpg', 'png']
+  #     info.qualities    = ['native', 'grey']
+  #     info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
+  #     info.image_host   = 'http://myserver.com/image'
+  #   end
   def to_iiif_xml(&block)
     builder = Nokogiri::XML::Builder.new do |xml|
       info = Hashie::Mash.new
@@ -157,6 +153,12 @@ class Djatoka::Metadata
       }
     end
     builder.to_xml
+  end
+
+  private
+  # Just the levels themselves, as a sorted array of integers
+  def levels_as_i
+    all_levels.keys.map{ |l| l.to_i}.sort
   end
 
 end

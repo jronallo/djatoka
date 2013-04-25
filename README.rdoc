@@ -91,14 +91,25 @@ Tested with the following Ruby versions:
 - 1.9.2-p0
 
 == IIIF Support
-This gem can now translate parameters from {International Image Interoperability Framework (IIIF)}[http://www-sul.stanford.edu/iiif/image-api/]  requests into Djataka requests.  It follows the same pattern as a regular Djatoka::Region
+This gem can translate parameters from {International Image Interoperability Framework (IIIF)}[http://www-sul.stanford.edu/iiif/image-api/] requests into Djataka requests.  It follows the same pattern as creating a Djatoka::Region
 
-== IIIF Example
+=== IIIF Example
   # Create a resolver object with a URL.
   resolver = Djatoka::Resolver.new('http://african.lanl.gov/adore-djatoka/resolver')
 
   # A known good identifier
   identifier = 'info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3'
+
+  # IIIF Image Request
+  # Create a IiifRequest with the resolver and id
+  iiif_request = Djatoka::IiifRequest.new(resolver, identifier)
+
+  # Set IIIF parameters and create a Djatoka::Region
+  # Note: All IIIF parameters are required before creating a Djatoka::Region
+  djatoka_region = iiif_request.region('full').size('full').rotation('0').quality('native').format('jpg').djatoka_region
+
+  # Use the Djatoka::Region as normal
+  djatoka_region.url
 
   # IIIF Info Request (Metadata)
   # First, create a Djatoka::Metadata object and perform the request to the server for metadata.
@@ -115,18 +126,9 @@ This gem can now translate parameters from {International Image Interoperability
     info.image_host   = 'http://myserver.com/image'
   end
 
-  # If you want the xml flavor of a IIIF Info request
-  # Use Djatoka::Metadata#to_iiif_xml.  It can be called with the same type of block as #to_iiif_json
-
-  # IIIF Image Request
-  # Create a IiifRequest with the resolver and id
-  iiif_request = Djatoka::IiifRequest.new(resolver, identifier)
-
-  # Set IIIF paramaters and create a Djatoka::Region (Note: All IIIF parameters are required before creating a Djatoka::Region )
-  djatoka_region = iiif_request.region('full').size('full').rotation('0').quality('native').format('jpg').djatoka_region
-
-  # Use the Djatoka::Region as normal
-  djatoka_region.url
+  # If you want the xml flavor of a IIIF Info response, use
+  xml = metadata.to_iiif_xml
+  # It can be called with the same type of block as #to_iiif_json
 
 == Commandline
 

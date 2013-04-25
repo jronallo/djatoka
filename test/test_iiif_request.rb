@@ -30,7 +30,7 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
       end
 
-      context 'translates region paramaters' do
+      context 'translates region parameters' do
         setup do
           @req.size('full').rotation('0').quality('native').format('jpg')
         end
@@ -47,7 +47,7 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
         end
       end
 
-      context 'translates size paramaters' do
+      context 'translates size parameters' do
         setup do
           @req.region('10,20,50,100').rotation('0').quality('native').format('jpg')
         end
@@ -83,7 +83,7 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
       end
 
-      context 'translates rotation paramaters' do
+      context 'translates rotation parameters' do
         setup do
           @req.region('10,20,50,100').size('800,').quality('native').format('jpg')
         end
@@ -103,7 +103,7 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
         end
       end
 
-      context 'translates format paramaters' do
+      context 'translates format parameters' do
         setup do
           @req.region('full').size('full').rotation('0').quality('native')
         end
@@ -131,7 +131,7 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
         end
       end
 
-      context 'validates quaility paramaters' do
+      context 'validates quaility parameters' do
         setup do
           @req.region('full').size('full').rotation('0').format('jpg')
         end
