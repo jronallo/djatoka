@@ -63,6 +63,16 @@ class Djatoka::Resolver
     Djatoka::Region.new(self, rft_id, params).uri
   end
 
+  # Shortcut for creating a Djatoka::Region from a Hash of Iiif parameters.
+  def iiif_region(rft_id, params={})
+    Djatoka::IiifRequest.new(self, rft_id, params).djatoka_region
+  end
+
+  # Shortcut for creating an Addressable::URI from a Hash of Iiif parameters.
+  def iiif_uri(rft_id, params={})
+    Djatoka::IiifRequest.new(self, rft_id, params).djatoka_region.uri
+  end
+
   def base_uri_params
     params = {:host => host, :path => path, :scheme => scheme}
     params[:port] = port if port

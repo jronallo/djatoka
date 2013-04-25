@@ -58,6 +58,26 @@ class TestDjatokaResolver < Test::Unit::TestCase
         assert @resolver.region_uri(@identifier).is_a? Addressable::URI
       end
 
+      context 'Iiif Requests' do
+        setup do
+          @iiif = {
+            :region => 'full',
+            :size => 'full',
+            :rotation => '0',
+            :quality => 'native',
+            :format => 'jpg'
+          }
+        end
+
+        should 'create a region from a hash of IIIF parameters' do
+          assert @resolver.iiif_region(@identifier, @iiif).is_a? Djatoka::Region
+        end
+
+        should 'create a region uri from a hash of IIIF parameters' do
+          assert @resolver.iiif_uri(@identifier, @iiif).is_a? Addressable::URI
+        end
+      end
+
     end #context a Djatoka::Resolver
 
     context 'a resolver with a port number' do
