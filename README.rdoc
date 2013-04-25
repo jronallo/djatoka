@@ -91,7 +91,7 @@ Tested with the following Ruby versions:
 - 1.9.2-p0
 
 == IIIF Support
-This gem can translate parameters from {International Image Interoperability Framework (IIIF)}[http://www-sul.stanford.edu/iiif/image-api/] requests into Djataka requests.  It follows the same pattern as creating a Djatoka::Region
+This gem can translate parameters from {International Image Interoperability Framework (IIIF)}[http://www-sul.stanford.edu/iiif/image-api/] requests into Djatoka requests.  It follows the same pattern as creating a Djatoka::Region
 
 === IIIF Example
   # Create a resolver object with a URL.
