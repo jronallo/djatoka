@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{djatoka}
-  s.version = "0.2.3"
+  s.version = "0.2.4"
   s.authors = ["Jason Ronallo", "Willy Mene"]
   s.email = %q{jronallo@gmail.com wmene@stanford.edu}
   s.homepage = %q{http://github.com/jronallo/djatoka}
