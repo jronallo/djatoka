@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    djatoka (0.2.3)
+    djatoka (0.2.4)
       addressable
       hashie
       json
