@@ -143,6 +143,15 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         end
       end
 
+      context 'protocol relative urls' do
+        should 'return a protocol relative url' do
+          region = Djatoka::Region.new(@resolver, @identifier, {protocol_relative: true})
+          assert_equal nil, region.uri.scheme
+          assert !region.url.include?('http:')
+          assert !region.url.include?('https:')
+        end
+      end
+
     end #context
 
   end #with_a_resolver

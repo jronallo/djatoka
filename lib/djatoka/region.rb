@@ -28,6 +28,12 @@ class Djatoka::Region
     end
     @rft_id = rft_id
     @query = Hashie::Mash.new
+
+    if params[:protocol_relative]
+      @protocol_relative = true
+    end
+    params.delete(:protocol_relative)
+
     unless params.empty?
       map_params(params)
     end
@@ -40,7 +46,11 @@ class Djatoka::Region
 
   # Addressable::URI for the Region
   def uri
-    uri = Addressable::URI.new(resolver.base_uri_params)
+    resolver_params = resolver.base_uri_params
+    if @protocol_relative
+      resolver_params[:scheme] = nil
+    end
+    uri = Addressable::URI.new(resolver_params)
     uri.query_values = region_params
     uri
   end
