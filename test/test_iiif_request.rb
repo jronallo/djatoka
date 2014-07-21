@@ -11,6 +11,10 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
         setup do
           @region = @req.region('full').size('full').rotation('0').quality('native').format('jpg').djatoka_region
         end
+	
+	should 'set id properly' do
+	  assert_equal @identifier, @region.rft_id
+	end
 
         should 'set region to nil from full' do
           assert_nil @region.query.region
