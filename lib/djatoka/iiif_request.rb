@@ -105,7 +105,7 @@ module Djatoka
         raise IiifException.new(msg)
       end
 
-      region = @resolver.region(@iiif_params[:id])
+      region = @resolver.region(@id)
 
       if(@iiif_params[:region] =~ /^(\d+),(\d+),(\d+),(\d+)$/)
         region.region("#{$2},#{$1},#{$4},#{$3}")
