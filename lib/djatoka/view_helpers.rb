@@ -11,6 +11,11 @@ module Djatoka
   # <tt>:resolver</tt> parameter when using one of these helpers.
   module ViewHelpers
 
+    def djatoka_image_url(rft_id, params={})
+      resolver, region = setup_djatoka_image_tag(rft_id, params)
+      region.url
+    end
+
     # Returns an image_tag. Unless params are passed in which constrain the
     # <tt>scale</tt> or <tt>level</tt> of the image, this will be the highest
     # resolution of the given image.
@@ -20,12 +25,13 @@ module Djatoka
     #   djatoka_image_tag('info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3',
     #      {:scale => 150, :region => [1400,500,1400,1500], :class => 'volleyball'})
     def djatoka_image_tag(rft_id, params={})
-      resolver, region = setup_djatoka_image_tag(rft_id, params)
-      if resolver and region
-        image_tag region.url, clean_image_tag_params(params)
-      else
+      url = djatoka_image_url(rft_id, params)
+      image_tag url, clean_image_tag_params(params)
+    end
 
-      end
+    def djatoka_square_image_url(rft_id, params={})
+      resolver, region = setup_djatoka_image_tag(rft_id, params)
+      region.square.url
     end
 
     # Returns an image_tag for a square image. The long side is cropped.
@@ -35,42 +41,41 @@ module Djatoka
     #      {:scale => 250, :class => 'djatoka_image_larger',
     #      :resolver => 'http://african.lanl.gov/adore-djatoka/resolver' })
     def djatoka_square_image_tag(rft_id, params={})
-      resolver, region = setup_djatoka_image_tag(rft_id, params)
-      if resolver and region
-        image_tag(region.square.url, clean_square_image_tag_params(params)) #+ debug(region)
-      else
+      url = djatoka_square_image_url(rft_id, params)
+      image_tag(url, clean_square_image_tag_params(params)) #+ debug(region)
+    end
 
-      end
+    def djatoka_top_left_square_image_url(rft_id, params={})
+      resolver, region = setup_djatoka_image_tag(rft_id, params)
+      region.top_left_square.url
     end
 
     # FIXME DRY
     def djatoka_top_left_square_image_tag(rft_id, params={})
-      resolver, region = setup_djatoka_image_tag(rft_id, params)
-      if resolver and region
-        image_tag(region.top_left_square.url, clean_square_image_tag_params(params)) #+ debug(region)
-      else
+      url = djatoka_top_left_square_image_url(rft_id, params)
+      image_tag(url, clean_square_image_tag_params(params))
+    end
 
-      end
+    def djatoka_bottom_right_square_image_url(rft_id, params={})
+      resolver, region = setup_djatoka_image_tag(rft_id, params)
+      region.bottom_right_square.url
     end
 
     def djatoka_bottom_right_square_image_tag(rft_id, params={})
-      resolver, region = setup_djatoka_image_tag(rft_id, params)
-      if resolver and region
-        image_tag(region.bottom_right_square.url, clean_square_image_tag_params(params)) #+ debug(region)
-      else
+      url = djatoka_bottom_right_square_image_url(rft_id, params)
+      image_tag(url, clean_square_image_tag_params(params))
+    end
 
-      end
+    def djatoka_smallbox_image_url(rft_id, params={})
+      resolver, region = setup_djatoka_image_tag(rft_id, params)
+      region.smallbox.url
     end
 
     # Returns an image tag for an image exactly 75x75
     #   djatoka_smallbox_image_tag('info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3')
     def djatoka_smallbox_image_tag(rft_id, params={})
-      resolver, region = setup_djatoka_image_tag(rft_id, params)
-      if resolver and region
-        image_tag region.smallbox.url, clean_square_image_tag_params(params)
-      else
-
-      end
+      url = djatoka_smallbox_image_url(rft_id, params)
+      image_tag url, clean_square_image_tag_params(params)
     end
 
     # Include djatoka_openlayers_script on any page you need pan and zoom to
@@ -123,19 +128,19 @@ module Djatoka
         nil
       end
     end
-    
+
     def clean_image_tag_params(params)
       new_params = params.dup
-      if new_params[:scale]         
+      if new_params[:scale]
         new_params.delete(:scale)
       end
       new_params
     end
-    
+
     def clean_square_image_tag_params(params)
       new_params = params.dup
-      if new_params[:scale]        
-        new_params[:height] = new_params[:scale] unless new_params[:height]        
+      if new_params[:scale]
+        new_params[:height] = new_params[:scale] unless new_params[:height]
         new_params[:width]  = new_params[:scale] unless new_params[:width]
         new_params.delete(:scale)
       end
