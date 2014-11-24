@@ -123,7 +123,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
           "tile_width": 512,
           "tile_height": 512,
           "formats": [ "jpg", "png" ],
-          "qualities": [ "native", "grey" ],
+          "qualities": [ "default", "gray" ],
           "profile": "http://library.stanford.edu/iiif/image-api/compliance.html#level1",
           "image_host": "http://myserver.com/image"
         }
@@ -134,7 +134,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
             info.tile_width   = '512'
             info.tile_height  = 512   # tile_* can be string or int
             info.formats      = ['jpg', 'png']
-            info.qualities    = ['native', 'grey']
+            info.qualities    = ['default', 'gray']
             info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
             info.image_host   = 'http://myserver.com/image'
         end
@@ -163,8 +163,8 @@ class TestDjatokaMetadata < Test::Unit::TestCase
             <format>png</format>
           </formats>
           <qualities>
-            <quality>native</quality>
-            <quality>grey</quality>
+            <quality>default</quality>
+            <quality>gray</quality>
           </qualities>
           <profile>http://library.stanford.edu/iiif/image-api/compliance.html#level1</profile>
           <image_host>http://myserver.com/image</image_host>
@@ -175,7 +175,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
             info.tile_width   = '512'
             info.tile_height  = 512   # tile_* can be string or int
             info.formats      = ['jpg', 'png']
-            info.qualities    = ['native', 'grey']
+            info.qualities    = ['default', 'gray']
             info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
             info.image_host   = 'http://myserver.com/image'
         end

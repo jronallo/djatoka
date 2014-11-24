@@ -88,7 +88,7 @@ class Djatoka::Metadata
   #     info.tile_width   = 512
   #     info.tile_height  = 512
   #     info.formats      = ['jpg', 'png']
-  #     info.qualities    = ['native', 'grey']
+  #     info.qualities    = ['default', 'gray']
   #     info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
   #     info.image_host   = 'http://myserver.com/image'
   #   end
@@ -119,7 +119,7 @@ class Djatoka::Metadata
   #     info.tile_width   = 512
   #     info.tile_height  = 512
   #     info.formats      = ['jpg', 'png']
-  #     info.qualities    = ['native', 'grey']
+  #     info.qualities    = ['default', 'gray']
   #     info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
   #     info.image_host   = 'http://myserver.com/image'
   #   end
@@ -162,4 +162,3 @@ class Djatoka::Metadata
   end
 
 end
-
