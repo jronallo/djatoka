@@ -126,10 +126,6 @@ This gem can translate parameters from {International Image Interoperability Fra
     info.image_host   = 'http://myserver.com/image'
   end
 
-  # If you want the xml flavor of a IIIF Info response, use
-  xml = metadata.to_iiif_xml
-  # It can be called with the same type of block as #to_iiif_json
-
 == Commandline
 
 There is also a little commandline utility for outputting the OpenURL.

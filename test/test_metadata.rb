@@ -141,46 +141,6 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         assert_equal expected, JSON.parse(str)
       end
 
-      should 'create xml responses' do
-        iiif_xml =<<-EOXML
-        <info xmlns="http://library.stanford.edu/iiif/image-api/ns/">
-          <identifier>info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3</identifier>
-          <width>5120</width>
-          <height>3372</height>
-          <scale_factors>
-            <scale_factor>0</scale_factor>
-            <scale_factor>1</scale_factor>
-            <scale_factor>2</scale_factor>
-            <scale_factor>3</scale_factor>
-            <scale_factor>4</scale_factor>
-            <scale_factor>5</scale_factor>
-            <scale_factor>6</scale_factor>
-          </scale_factors>
-          <tile_width>512</tile_width>
-          <tile_height>512</tile_height>
-          <formats>
-            <format>jpg</format>
-            <format>png</format>
-          </formats>
-          <qualities>
-            <quality>default</quality>
-            <quality>gray</quality>
-          </qualities>
-          <profile>http://library.stanford.edu/iiif/image-api/compliance.html#level1</profile>
-          <image_host>http://myserver.com/image</image_host>
-        </info>
-        EOXML
-
-        str = @metadata.to_iiif_xml do |info|
-            info.tile_width   = '512'
-            info.tile_height  = 512   # tile_* can be string or int
-            info.formats      = ['jpg', 'png']
-            info.qualities    = ['default', 'gray']
-            info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
-            info.image_host   = 'http://myserver.com/image'
-        end
-        assert EquivalentXml.equivalent?(str, iiif_xml)
-      end
     end #IIIF Info Responses
 
   end #with_a_resolver
