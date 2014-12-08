@@ -84,75 +84,34 @@ class Djatoka::Metadata
   # the scale_factors as determined from Djatoka::Metadata#levels
   # The method yields a Mash where you can set the value of the optional fields.  Here's an example:
   #
-  #   metadata.to_iiif_xml do |info|
-  #     info.tile_width   = 512
-  #     info.tile_height  = 512
-  #     info.formats      = ['jpg', 'png']
-  #     info.qualities    = ['native', 'grey']
-  #     info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
-  #     info.image_host   = 'http://myserver.com/image'
-  #   end
-  def to_iiif_json(&block)
-     info = Hashie::Mash.new
-     info.identifier =  @rft_id
-     info.width = @width.to_i
-     info.height = @height.to_i
-     info.scale_factors = levels_as_i
-     # optional fields map directly to json from the Mash
-     yield(info)
-
-     # convert strings to ints for tile width and height
-     info.tile_width = info.tile_width.to_i if(info.tile_width?)
-     info.tile_height = info.tile_height.to_i if(info.tile_height?)
-     JSON.pretty_generate(info)
-  end
-
-  # Builds a String containing the xml response to a IIIF Image Information Request
-  #
-  # * {Documentation about the Image Info Request}[http://www-sul.stanford.edu/iiif/image-api/#info]
-  #
-  # It will fill in the required fields of identifier, width, and height.  It will also fill in
-  # the scale_factors as determined from Djatoka::Metadata#levels
-  # The method yields a Mash where you can set the values of the optional fields.  Here's an example:
-  #
   #   metadata.to_iiif_json do |info|
   #     info.tile_width   = 512
   #     info.tile_height  = 512
   #     info.formats      = ['jpg', 'png']
-  #     info.qualities    = ['native', 'grey']
+  #     info.qualities    = ['default', 'gray']
   #     info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
   #     info.image_host   = 'http://myserver.com/image'
   #   end
-  def to_iiif_xml(&block)
-    builder = Nokogiri::XML::Builder.new do |xml|
-      info = Hashie::Mash.new
-      yield(info)
-      xml.info('xmlns' => 'http://library.stanford.edu/iiif/image-api/ns/') {
-        xml.identifier @rft_id
-        xml.width @width
-        xml.height @height
-        xml.scale_factors {
-          levels_as_i.each {|lvl| xml.scale_factor lvl}
-        }
+  def to_iiif_json(&block)
+    info = Hashie::Mash.new
 
-        #optional fields
-        xml.tile_width info.tile_width if(info.tile_width?)
-        xml.tile_height info.tile_height if(info.tile_height?)
-        if(info.formats?)
-          xml.formats {
-            info.formats.each {|mt| xml.format mt}
-          }
-        end
-        if(info.qualities?)
-          xml.qualities {
-            info.qualities.each {|q| xml.quality q}
-          }
-        end
-        xml.profile info.profile if(info.profile?)
-        xml.image_host info.image_host if(info.image_host?)
-      }
+    info[:@id]  = @rft_id
+    info.width  = @width.to_i
+    info.height = @height.to_i
+
+    # optional fields map directly to json from the Mash
+    yield(info)
+
+    info[:@context] = info.delete :context
+
+    # convert sizes to integers (if string)
+    [info.sizes, info.tiles].each do |prop|
+      prop.each do |size|
+        size.each { |k, v| size[k] = v.to_i if k =~ /^width|height$/ }
+      end
     end
-    builder.to_xml
+
+    JSON.pretty_generate(info)
   end
 
   private
@@ -162,4 +121,3 @@ class Djatoka::Metadata
   end
 
 end
-

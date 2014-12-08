@@ -9,9 +9,9 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
       context 'from a IIIF request with all defaults' do
         setup do
-          @region = @req.region('full').size('full').rotation('0').quality('native').format('jpg').djatoka_region
+          @region = @req.region('full').size('full').rotation('0').quality('default').format('jpg').djatoka_region
         end
-	
+
 	should 'set id properly' do
 	  assert_equal @identifier, @region.rft_id
 	end
@@ -36,7 +36,7 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
       context 'translates region parameters' do
         setup do
-          @req.size('full').rotation('0').quality('native').format('jpg')
+          @req.size('full').rotation('0').quality('default').format('jpg')
         end
 
         should 'set x,y,w,h requests' do
@@ -53,7 +53,7 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
       context 'translates size parameters' do
         setup do
-          @req.region('10,20,50,100').rotation('0').quality('native').format('jpg')
+          @req.region('10,20,50,100').rotation('0').quality('default').format('jpg')
         end
 
         should 'set "w," requests to the correct scale value' do
@@ -89,7 +89,7 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
       context 'translates rotation parameters' do
         setup do
-          @req.region('10,20,50,100').size('800,').quality('native').format('jpg')
+          @req.region('10,20,50,100').size('800,').quality('default').format('jpg')
         end
 
         should 'set values that are numeric' do
@@ -109,7 +109,7 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
       context 'translates format parameters' do
         setup do
-          @req.region('full').size('full').rotation('0').quality('native')
+          @req.region('full').size('full').rotation('0').quality('default')
         end
 
         should 'set the format from a valid extension as from the end of a URL' do
@@ -155,12 +155,12 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
       context '#all_params_present?' do
         should 'return true when all the valid params have been set' do
-          @req.region('full').size('full').rotation('0').quality('native').format('jpg')
+          @req.region('full').size('full').rotation('0').quality('default').format('jpg')
           assert @req.all_params_present?
         end
 
         should 'return false when params are missing' do
-          @req.region('full').size('full').quality('native').format('jpg')
+          @req.region('full').size('full').quality('default').format('jpg')
           assert_equal false, @req.all_params_present?
         end
       end
