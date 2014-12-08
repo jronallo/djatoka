@@ -93,18 +93,25 @@ class Djatoka::Metadata
   #     info.image_host   = 'http://myserver.com/image'
   #   end
   def to_iiif_json(&block)
-     info = Hashie::Mash.new
-     info.identifier =  @rft_id
-     info.width = @width.to_i
-     info.height = @height.to_i
-     info.scale_factors = levels_as_i
-     # optional fields map directly to json from the Mash
-     yield(info)
+    info = Hashie::Mash.new
 
-     # convert strings to ints for tile width and height
-     info.tile_width = info.tile_width.to_i if(info.tile_width?)
-     info.tile_height = info.tile_height.to_i if(info.tile_height?)
-     JSON.pretty_generate(info)
+    info[:@id]  = @rft_id
+    info.width  = @width.to_i
+    info.height = @height.to_i
+
+    # optional fields map directly to json from the Mash
+    yield(info)
+
+    info[:@context] = info.delete :context
+
+    # convert sizes to integers (if string)
+    [info.sizes, info.tiles].each do |prop|
+      prop.each do |size|
+        size.each { |k, v| size[k] = v.to_i if k =~ /^width|height$/ }
+      end
+    end
+
+    JSON.pretty_generate(info)
   end
 
   private
