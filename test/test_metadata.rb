@@ -129,8 +129,12 @@ class TestDjatokaMetadata < Test::Unit::TestCase
             }
           ],
           "sizes": [
-            { "width": 150, "height": 100 },
-            { "width": 600, "height": 400 }
+            {"height": 106, "width": 160},
+            {"height": 211, "width": 320},
+            {"height": 422, "width": 640},
+            {"height": 843, "width": 1280},
+            {"height": 1686, "width": 2560},
+            {"height": 3372, "width": 5120}
           ],
           "profile": [
             "http://iiif.io/api/image/2/level1.json",
@@ -146,7 +150,6 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         str = @metadata.to_iiif_json do |opts|
           opts.tile_width       = 512 # tile_* can be string or int
           opts.tile_height      = "512"
-          opts.sizes            = [{ "width" => 150, "height" => "100"}, { "width" => "600", "height" => 400}]
           opts.compliance_level = 1
           opts.formats          = ["jpg", "png"]
           opts.qualities        = ["default", "gray"]
@@ -154,7 +157,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         assert_equal expected, JSON.parse(str)
       end
 
-      should 'create a minimal json response if no options are passed in' do
+      should 'create a minimal json response with required properties if no options are passed in' do
         iiif_json = <<-EOF
         {
           "@context": "http://iiif.io/api/image/2/context.json",
@@ -162,6 +165,14 @@ class TestDjatokaMetadata < Test::Unit::TestCase
           "width": 5120,
           "height": 3372,
           "protocol": "http://iiif.io/api/image",
+          "sizes": [
+            {"height": 106, "width": 160},
+            {"height": 211, "width": 320},
+            {"height": 422, "width": 640},
+            {"height": 843, "width": 1280},
+            {"height": 1686, "width": 2560},
+            {"height": 3372, "width": 5120}
+          ],
           "profile": [
             "http://iiif.io/api/image/2/level0.json"
           ]

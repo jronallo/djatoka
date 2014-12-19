@@ -104,7 +104,13 @@ class Djatoka::Metadata
     info.height = @height.to_i
     info.protocol = IIIF_20_PROTOCOL_URI
 
-    # get optional fields
+    sizes = []
+    level_sizes = all_levels
+    levels_as_i.each do |l|
+      sizes << level_sizes[l]
+    end
+    info.sizes = sizes
+
     if block_given?
       opts = Hashie::Mash.new
       yield(opts)
@@ -130,20 +136,6 @@ class Djatoka::Metadata
     unless tiles.empty?
       tiles["scaleFactors"] = levels_as_i
       info.tiles = [tiles]
-    end
-
-    # convert sizes to integers (if string)
-    # or just use djatoka levels from #all_levels?
-    if opts.sizes
-      sizes = []
-      opts.sizes.each do |size|
-        info_size = {}
-        size.each do |k, v|
-          info_size[k] = v.to_i
-        end
-        sizes << info_size
-      end
-      info.sizes = sizes unless sizes.empty?
     end
 
     profile = []
