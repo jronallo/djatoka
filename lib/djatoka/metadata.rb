@@ -80,21 +80,20 @@ class Djatoka::Metadata
     all_levels.keys.sort.last
   end
 
-  # Builds a String containing the JSON response to a IIIF Image Information Request
+  # Builds a String containing the JSON-LD response to a IIIF Image Information Request
   #
-  # * {Documentation about the Image Info Request}[http://www-sul.stanford.edu/iiif/image-api/#info]
+  # * {Documentation about the Image Info Request}[http://iiif.io/api/image/2.0/#information-request]
   #
-  # It will fill in the required fields of identifier, width, and height.  It will also fill in
-  # the scale_factors as determined from Djatoka::Metadata#levels
-  # The method yields a Mash where you can set the value of the optional fields.  Here's an example:
+  # It will fill in the required @context, @id, protocol, width, height, and profile properties.  It will also fill in
+  # sizes as determined from the Djatoka levels from Djatoka::Metadata#levels
+  # The method yields a Mash where you can set the value of the optional properties.  Here's an example:
   #
-  #   metadata.to_iiif_json do |info|
-  #     info.tile_width   = 512
-  #     info.tile_height  = 512
-  #     info.formats      = ['jpg', 'png']
-  #     info.qualities    = ['default', 'gray']
-  #     info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
-  #     info.image_host   = 'http://myserver.com/image'
+  #   metadata.to_iiif_json do |opts|
+  #     opts.tile_width       = 512 # tile_* can be string or int
+  #     opts.tile_height      = "512"
+  #     opts.compliance_level = 1
+  #     opts.formats          = ["jpg", "png"]
+  #     opts.qualities        = ["default", "gray"]
   #   end
   def to_iiif_json(&block)
     info = Hashie::Mash.new
