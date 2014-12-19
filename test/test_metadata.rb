@@ -116,6 +116,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
       should 'create json responses' do
         iiif_json = <<-EOF
         {
+          "@context": "http://iiif.io/api/image/2/context.json",
           "@id": "info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3",
           "width": 5120,
           "height": 3372,
@@ -124,7 +125,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
             {
               "width": 512,
               "height": 512,
-              "scaleFactors": [1, 2, 4, 6]
+              "scaleFactors": [1, 2, 3, 4, 5, 6]
             }
           ],
           "sizes": [
@@ -132,30 +133,43 @@ class TestDjatokaMetadata < Test::Unit::TestCase
             { "width": 600, "height": 400 }
           ],
           "profile": [
-            "http://iiif.io/api/image/2/level2.json",
+            "http://iiif.io/api/image/2/level1.json",
             {
               "formats": [ "jpg", "png" ],
               "qualities": [ "default", "gray" ]
             }
-          ],
-          "@context": "http://iiif.io/api/image/2/context.json"
+          ]
         }
         EOF
         expected = JSON.parse(iiif_json)
 
-        str = @metadata.to_iiif_json do |info|
-          info.context    = "http://iiif.io/api/image/2/context.json"
-          info.protocol   = "http://iiif.io/api/image"
-          info.tiles      = [{ "width" => 512, "height" => "512", "scaleFactors" => [1, 2, 4, 6] }] # tile_* can be string or int
-          info.sizes      = [{ "width" => 150, "height" => "100"}, { "width" => "600", "height" => 400}]
-          info.profile    = [
-            "http://iiif.io/api/image/2/level2.json",
-            {
-              "formats" => ["jpg", "png"],
-              "qualities" => ["default", "gray"]
-            }
-          ]
+        str = @metadata.to_iiif_json do |opts|
+          opts.tile_width       = 512 # tile_* can be string or int
+          opts.tile_height      = "512"
+          opts.sizes            = [{ "width" => 150, "height" => "100"}, { "width" => "600", "height" => 400}]
+          opts.compliance_level = 1
+          opts.formats          = ["jpg", "png"]
+          opts.qualities        = ["default", "gray"]
         end
+        assert_equal expected, JSON.parse(str)
+      end
+
+      should 'create a minimal json response if no options are passed in' do
+        iiif_json = <<-EOF
+        {
+          "@context": "http://iiif.io/api/image/2/context.json",
+          "@id": "info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3",
+          "width": 5120,
+          "height": 3372,
+          "protocol": "http://iiif.io/api/image",
+          "profile": [
+            "http://iiif.io/api/image/2/level0.json"
+          ]
+        }
+        EOF
+        expected = JSON.parse(iiif_json)
+
+        str = @metadata.to_iiif_json
         assert_equal expected, JSON.parse(str)
       end
 

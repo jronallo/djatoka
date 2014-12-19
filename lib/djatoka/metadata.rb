@@ -5,6 +5,10 @@ class Djatoka::Metadata
     :levels, :layer_count, :response, :resolver
   include Djatoka::Net
 
+  IIIF_20_CONTEXT_URI         = 'http://iiif.io/api/image/2/context.json'
+  IIIF_20_PROTOCOL_URI        = 'http://iiif.io/api/image'
+  IIIF_20_BASE_COMPLIANCE_URI = 'http://iiif.io/api/image/2'
+
   def initialize(resolver, rft_id)
     @resolver = resolver
     @rft_id = rft_id
@@ -94,30 +98,75 @@ class Djatoka::Metadata
   #   end
   def to_iiif_json(&block)
     info = Hashie::Mash.new
-
+    info[:@context] = IIIF_20_CONTEXT_URI
     info[:@id]  = @rft_id
     info.width  = @width.to_i
     info.height = @height.to_i
+    info.protocol = IIIF_20_PROTOCOL_URI
 
-    # optional fields map directly to json from the Mash
-    yield(info)
-
-    info[:@context] = info.delete :context
-
-    # convert sizes to integers (if string)
-    [info.sizes, info.tiles].each do |prop|
-      prop.each do |size|
-        size.each { |k, v| size[k] = v.to_i if k =~ /^width|height$/ }
-      end
+    # get optional fields
+    if block_given?
+      opts = Hashie::Mash.new
+      yield(opts)
+      process_optional_iiif_fields info, opts
+    else
+      # Assume level 0 compliance if no options passed in
+      info.profile = [ "#{IIIF_20_BASE_COMPLIANCE_URI}/level0.json" ]
     end
 
     JSON.pretty_generate(info)
   end
 
   private
+
+  def process_optional_iiif_fields info, opts
+    tiles = {}
+    if opts.tile_width
+      tiles["width"] = opts.tile_width.to_i
+    end
+    if opts.tile_height
+      tiles["height"] = opts.tile_height.to_i
+    end
+    unless tiles.empty?
+      tiles["scaleFactors"] = levels_as_i
+      info.tiles = [tiles]
+    end
+
+    # convert sizes to integers (if string)
+    # or just use djatoka levels from #all_levels?
+    if opts.sizes
+      sizes = []
+      opts.sizes.each do |size|
+        info_size = {}
+        size.each do |k, v|
+          info_size[k] = v.to_i
+        end
+        sizes << info_size
+      end
+      info.sizes = sizes unless sizes.empty?
+    end
+
+    profile = []
+    if opts.compliance_level
+      c_level = opts.compliance_level
+    else
+      c_level = '0'
+    end
+    profile << "#{IIIF_20_BASE_COMPLIANCE_URI}/level#{c_level}.json"
+
+    profile_options = {}
+    if opts.formats
+      profile_options["formats"] = opts.formats
+    end
+    if opts.qualities
+      profile_options["qualities"] = opts.qualities
+    end
+    profile << profile_options unless profile_options.empty?
+    info.profile = profile
+  end
   # Just the levels themselves, as a sorted array of integers
   def levels_as_i
-    all_levels.keys.map{ |l| l.to_i}.sort
+    all_levels.keys.map{ |l| l.to_i}.sort.reject{|l| l == 0}
   end
 
 end
