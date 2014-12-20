@@ -95,10 +95,10 @@ class Djatoka::Metadata
   #     opts.formats          = ["jpg", "png"]
   #     opts.qualities        = ["default", "gray"]
   #   end
-  def to_iiif_json(&block)
+  def to_iiif_json(iiif_id, &block)
     info = Hashie::Mash.new
     info[:@context] = IIIF_20_CONTEXT_URI
-    info[:@id]  = @rft_id
+    info[:@id]  = iiif_id
     info.width  = @width.to_i
     info.height = @height.to_i
     info.protocol = IIIF_20_PROTOCOL_URI

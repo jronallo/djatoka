@@ -117,7 +117,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         iiif_json = <<-EOF
         {
           "@context": "http://iiif.io/api/image/2/context.json",
-          "@id": "info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3",
+          "@id": "http://yourserver.edu/iiif/your%2Fimage_id",
           "width": 5120,
           "height": 3372,
           "protocol": "http://iiif.io/api/image",
@@ -147,7 +147,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         EOF
         expected = JSON.parse(iiif_json)
 
-        str = @metadata.to_iiif_json do |opts|
+        str = @metadata.to_iiif_json('http://yourserver.edu/iiif/your%2Fimage_id') do |opts|
           opts.tile_width       = 512 # tile_* can be string or int
           opts.tile_height      = "512"
           opts.compliance_level = 1
@@ -161,7 +161,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         iiif_json = <<-EOF
         {
           "@context": "http://iiif.io/api/image/2/context.json",
-          "@id": "info:lanl-repo/ds/5aa182c2-c092-4596-af6e-e95d2e263de3",
+          "@id": "http://yourserver.edu/iiif/your%2Fimage_id",
           "width": 5120,
           "height": 3372,
           "protocol": "http://iiif.io/api/image",
@@ -180,7 +180,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
         EOF
         expected = JSON.parse(iiif_json)
 
-        str = @metadata.to_iiif_json
+        str = @metadata.to_iiif_json('http://yourserver.edu/iiif/your%2Fimage_id')
         assert_equal expected, JSON.parse(str)
       end
 
