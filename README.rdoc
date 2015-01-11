@@ -106,29 +106,25 @@ This gem can translate parameters from {International Image Interoperability Fra
 
   # Set IIIF parameters and create a Djatoka::Region
   # Note: All IIIF parameters are required before creating a Djatoka::Region
-  djatoka_region = iiif_request.region('full').size('full').rotation('0').quality('native').format('jpg').djatoka_region
+  djatoka_region = iiif_request.region('full').size('full').rotation('0').quality('default').format('jpg').djatoka_region
 
   # Use the Djatoka::Region as normal
   djatoka_region.url
 
   # IIIF Info Request (Metadata)
+  # (See the 2.0 Info Request spec)}[http://iiif.io/api/image/2.0/#information-request]
   # First, create a Djatoka::Metadata object and perform the request to the server for metadata.
   metadata = resolver.metadata(identifier).perform
 
   # Create a IIIF Info json response string
   # Set values to optional fields by passing in a block and calling setters on the yielded Mash
-  json = metadata.to_iiif_json do |info|
-    info.tile_width   = 512
-    info.tile_height  = 512
-    info.formats      = ['jpg', 'png']
-    info.qualities    = ['native', 'grey']
-    info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
-    info.image_host   = 'http://myserver.com/image'
+  json = metadata.to_iiif_json do |opts|
+    opts.tile_width       = 512 # tile_* can be string or int
+    opts.tile_height      = "512"
+    opts.compliance_level = 1
+    opts.formats          = ["jpg", "png"]
+    opts.qualities        = ["default", "gray"]
   end
-
-  # If you want the xml flavor of a IIIF Info response, use
-  xml = metadata.to_iiif_xml
-  # It can be called with the same type of block as #to_iiif_json
 
 == Commandline
 
@@ -153,4 +149,3 @@ Jason Ronallo, Willy Mene
 == Copyright
 
 Copyright (c) 2010 North Carolina State University. See LICENSE for details.
-

@@ -64,7 +64,7 @@ class TestDjatokaResolver < Test::Unit::TestCase
             :region => 'full',
             :size => 'full',
             :rotation => '0',
-            :quality => 'native',
+            :quality => 'default',
             :format => 'jpg'
           }
         end
@@ -118,4 +118,3 @@ class TestDjatokaResolver < Test::Unit::TestCase
 
   end #with_a_resolver
 end
-

@@ -39,7 +39,7 @@ module Djatoka
   #   id = 'someImageId1234'
   #
   #   request = Djatoka::IiifRequest.new(resolver, id)
-  #   djatoka_region = request.region('full').size('full').rotation('0').quality('native').format('jpg').djatoka_region
+  #   djatoka_region = request.region('full').size('full').rotation('0').quality('default').format('jpg').djatoka_region
   class IiifRequest
 
     ALL_PARAMS = Set.new(['region', 'size', 'rotation', 'quality', 'format'])
@@ -150,7 +150,7 @@ module Djatoka
       end
       region.format(type.to_s)
 
-      unless(@iiif_params[:quality] =~ /^(native|color|grey|bitonal)$/i)
+      unless(@iiif_params[:quality] =~ /^(default|color|gray|bitonal)$/i)
         raise IiifInvalidParam.new 'quality', @iiif_params[:quality]
       end
 

@@ -5,6 +5,10 @@ class Djatoka::Metadata
     :levels, :layer_count, :response, :resolver
   include Djatoka::Net
 
+  IIIF_20_CONTEXT_URI         = 'http://iiif.io/api/image/2/context.json'
+  IIIF_20_PROTOCOL_URI        = 'http://iiif.io/api/image'
+  IIIF_20_BASE_COMPLIANCE_URI = 'http://iiif.io/api/image/2'
+
   def initialize(resolver, rft_id)
     @resolver = resolver
     @rft_id = rft_id
@@ -76,90 +80,84 @@ class Djatoka::Metadata
     all_levels.keys.sort.last
   end
 
-  # Builds a String containing the JSON response to a IIIF Image Information Request
+  # Builds a String containing the JSON-LD response to a IIIF Image Information Request
   #
-  # * {Documentation about the Image Info Request}[http://www-sul.stanford.edu/iiif/image-api/#info]
+  # * {Documentation about the Image Info Request}[http://iiif.io/api/image/2.0/#information-request]
   #
-  # It will fill in the required fields of identifier, width, and height.  It will also fill in
-  # the scale_factors as determined from Djatoka::Metadata#levels
-  # The method yields a Mash where you can set the value of the optional fields.  Here's an example:
+  # It will fill in the required @context, @id, protocol, width, height, and profile properties.  It will also fill in
+  # sizes as determined from the Djatoka levels from Djatoka::Metadata#levels
+  # The method yields a Mash where you can set the value of the optional properties.  Here's an example:
   #
-  #   metadata.to_iiif_xml do |info|
-  #     info.tile_width   = 512
-  #     info.tile_height  = 512
-  #     info.formats      = ['jpg', 'png']
-  #     info.qualities    = ['native', 'grey']
-  #     info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
-  #     info.image_host   = 'http://myserver.com/image'
+  #   metadata.to_iiif_json do |opts|
+  #     opts.tile_width       = 512 # tile_* can be string or int
+  #     opts.tile_height      = "512"
+  #     opts.compliance_level = 1
+  #     opts.formats          = ["jpg", "png"]
+  #     opts.qualities        = ["default", "gray"]
   #   end
-  def to_iiif_json(&block)
-     info = Hashie::Mash.new
-     info.identifier =  @rft_id
-     info.width = @width.to_i
-     info.height = @height.to_i
-     info.scale_factors = levels_as_i
-     # optional fields map directly to json from the Mash
-     yield(info)
+  def to_iiif_json(iiif_id, &block)
+    info = Hashie::Mash.new
+    info[:@context] = IIIF_20_CONTEXT_URI
+    info[:@id]  = iiif_id
+    info.width  = @width.to_i
+    info.height = @height.to_i
+    info.protocol = IIIF_20_PROTOCOL_URI
 
-     # convert strings to ints for tile width and height
-     info.tile_width = info.tile_width.to_i if(info.tile_width?)
-     info.tile_height = info.tile_height.to_i if(info.tile_height?)
-     JSON.pretty_generate(info)
-  end
-
-  # Builds a String containing the xml response to a IIIF Image Information Request
-  #
-  # * {Documentation about the Image Info Request}[http://www-sul.stanford.edu/iiif/image-api/#info]
-  #
-  # It will fill in the required fields of identifier, width, and height.  It will also fill in
-  # the scale_factors as determined from Djatoka::Metadata#levels
-  # The method yields a Mash where you can set the values of the optional fields.  Here's an example:
-  #
-  #   metadata.to_iiif_json do |info|
-  #     info.tile_width   = 512
-  #     info.tile_height  = 512
-  #     info.formats      = ['jpg', 'png']
-  #     info.qualities    = ['native', 'grey']
-  #     info.profile      = 'http://library.stanford.edu/iiif/image-api/compliance.html#level1'
-  #     info.image_host   = 'http://myserver.com/image'
-  #   end
-  def to_iiif_xml(&block)
-    builder = Nokogiri::XML::Builder.new do |xml|
-      info = Hashie::Mash.new
-      yield(info)
-      xml.info('xmlns' => 'http://library.stanford.edu/iiif/image-api/ns/') {
-        xml.identifier @rft_id
-        xml.width @width
-        xml.height @height
-        xml.scale_factors {
-          levels_as_i.each {|lvl| xml.scale_factor lvl}
-        }
-
-        #optional fields
-        xml.tile_width info.tile_width if(info.tile_width?)
-        xml.tile_height info.tile_height if(info.tile_height?)
-        if(info.formats?)
-          xml.formats {
-            info.formats.each {|mt| xml.format mt}
-          }
-        end
-        if(info.qualities?)
-          xml.qualities {
-            info.qualities.each {|q| xml.quality q}
-          }
-        end
-        xml.profile info.profile if(info.profile?)
-        xml.image_host info.image_host if(info.image_host?)
-      }
+    sizes = []
+    level_sizes = all_levels
+    levels_as_i.each do |l|
+      sizes << level_sizes[l]
     end
-    builder.to_xml
+    info.sizes = sizes
+
+    if block_given?
+      opts = Hashie::Mash.new
+      yield(opts)
+      process_optional_iiif_fields info, opts
+    else
+      # Assume level 0 compliance if no options passed in
+      info.profile = [ "#{IIIF_20_BASE_COMPLIANCE_URI}/level0.json" ]
+    end
+
+    JSON.pretty_generate(info)
   end
 
   private
+
+  def process_optional_iiif_fields info, opts
+    tiles = {}
+    if opts.tile_width
+      tiles["width"] = opts.tile_width.to_i
+    end
+    if opts.tile_height
+      tiles["height"] = opts.tile_height.to_i
+    end
+    unless tiles.empty?
+      tiles["scaleFactors"] = levels_as_i
+      info.tiles = [tiles]
+    end
+
+    profile = []
+    if opts.compliance_level
+      c_level = opts.compliance_level
+    else
+      c_level = '0'
+    end
+    profile << "#{IIIF_20_BASE_COMPLIANCE_URI}/level#{c_level}.json"
+
+    profile_options = {}
+    if opts.formats
+      profile_options["formats"] = opts.formats
+    end
+    if opts.qualities
+      profile_options["qualities"] = opts.qualities
+    end
+    profile << profile_options unless profile_options.empty?
+    info.profile = profile
+  end
   # Just the levels themselves, as a sorted array of integers
   def levels_as_i
-    all_levels.keys.map{ |l| l.to_i}.sort
+    all_levels.keys.map{ |l| l.to_i}.sort.reject{|l| l == 0}
   end
 
 end
-
