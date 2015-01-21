@@ -12,9 +12,9 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
           @region = @req.region('full').size('full').rotation('0').quality('default').format('jpg').djatoka_region
         end
 
-	should 'set id properly' do
-	  assert_equal @identifier, @region.rft_id
-	end
+      	should 'set id properly' do
+      	  assert_equal @identifier, @region.rft_id
+      	end
 
         should 'set region to nil from full' do
           assert_nil @region.query.region
@@ -42,6 +42,11 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
         should 'set x,y,w,h requests' do
           reg = @req.region('10,20,50,100').djatoka_region
           assert_equal '20,10,100,50', reg.query.region
+        end
+
+        should 'set pct:x,y,w,h requests' do
+          reg = @req.region('pct:10.5,20,30.8,40').djatoka_region
+          assert_equal '674,537,1348,1576', reg.query.region
         end
 
         should 'raise an exception if the region does not fit the x,y,w,h format, or is not "full"' do
@@ -77,6 +82,14 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
         should 'set "w,h" requests to the correct scale value' do
           reg = @req.size('1024,768').djatoka_region
           assert_equal '1024,768', reg.query.scale
+        end
+
+        should 'set "!w,h" requests to the correct scale value' do
+          reg = @req.size('!1024,768').djatoka_region
+          assert_equal '1024,674', reg.query.scale
+
+          reg = @req.size('!1024,500').djatoka_region
+          assert_equal '759,500', reg.query.scale
         end
 
         should 'raise an exception if the value cannot be parsed into a Float' do

@@ -43,7 +43,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
       end
 
       should 'return an OK status for a good request' do
-        metadata = @metadata.status
+        assert_equal 'OK', @metadata.status
       end
 
       should 'return a nil for a bad request' do
