@@ -106,14 +106,22 @@ module Djatoka
       end
 
       region = @resolver.region(@id)
+      metadata = @resolver.metadata(@id).perform
 
       if(@iiif_params[:region] =~ /^(\d+),(\d+),(\d+),(\d+)$/)
         region.region("#{$2},#{$1},#{$4},#{$3}")
+      elsif(@iiif_params[:region] =~ /^pct:([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)$/)
+        x = (($1.to_f / 100.0) * metadata.width.to_f).to_i
+        y = (($2.to_f / 100.0) * metadata.height.to_f).to_i
+        w = (($3.to_f / 100.0) * metadata.width.to_f).to_i
+        h = (($4.to_f / 100.0) * metadata.height.to_f).to_i
+        region.region([y, x, h, w])
       elsif(!(@iiif_params[:region] =~ /^full$/i))
         raise IiifInvalidParam.new "region", @iiif_params[:region]
       end
 
       s = @iiif_params[:size]
+
       case s
       when /^full$/i
         s #noop
@@ -126,7 +134,11 @@ module Djatoka
         region.scale(dj_scale.to_s)
       when /^(\d+),(\d+)$/
         region.scale("#{$1},#{$2}")
-      # TODO Best Fit: when /^!(\d+),(\d+)$/
+      when /^!(\d+),(\d+)$/
+        ratio = [$1.to_f / metadata.width.to_f, $2.to_f / metadata.height.to_f].min
+        width = (ratio * metadata.width.to_f).to_i
+        height = (ratio * metadata.height.to_f).to_i
+        region.scale([width, height])
       else
         raise IiifInvalidParam.new "size", s
       end
