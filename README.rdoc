@@ -4,7 +4,7 @@ Simple library for use with the {Djatoka JPEG2000 image server}[http://sourcefor
 It helps ease creation of the {OpenURLs}[http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Djatoka_OpenURL_Services#djatoka_OpenURL_Service_Types]
 used by Djatoka.
 
-{<img src="https://travis-ci.org/jronallo/djatoka.png" />}[https://travis-ci.org/jronallo/djatoka]
+{<img src="https://travis-ci.org/sul-dlss/djatoka.png" />}[https://travis-ci.org/sul-dlss/djatoka]
 
 == Installation
 
