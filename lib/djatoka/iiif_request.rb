@@ -129,7 +129,7 @@ module Djatoka
         region.scale( ["#{$1}", "0"] ) #w => w,0
       when /^,(\d+)$/
         region.scale( ["0", "#{$1}"] ) #h => 0,h
-      when /^pct:(\d+)$/i
+      when /^pct:(\d*\.?\d*)$/i
         dj_scale = $1.to_f / 100.0
         region.scale(dj_scale.to_s)
       when /^(\d+),(\d+)$/
