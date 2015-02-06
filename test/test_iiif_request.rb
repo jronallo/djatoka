@@ -77,6 +77,9 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
           reg = @req.size('pct:125').djatoka_region
           assert_equal '1.25', reg.query.scale
+
+          reg = @req.size('pct:6.25').djatoka_region
+          assert_equal '0.0625', reg.query.scale
         end
 
         should 'set "w,h" requests to the correct scale value' do
@@ -94,7 +97,7 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
         should 'raise an exception if the value cannot be parsed into a Float' do
           assert_raise Djatoka::IiifInvalidParam do
-            @req.size('pct:0.75').djatoka_region
+            @req.size('pct:0.7.5').djatoka_region
           end
         end
 
