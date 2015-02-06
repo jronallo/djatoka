@@ -1,10 +1,10 @@
-[![Build Status](https://travis-ci.org/sul-dlss/djatoka.svg?branch=master)](https://travis-ci.org/sul-dlss/djatoka)
-
 = djatoka
 
 Simple library for use with the {Djatoka JPEG2000 image server}[http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Main_Page].
 It helps ease creation of the {OpenURLs}[http://sourceforge.net/apps/mediawiki/djatoka/index.php?title=Djatoka_OpenURL_Services#djatoka_OpenURL_Service_Types]
 used by Djatoka.
+
+{<img src="https://travis-ci.org/sul-dlss/djatoka.svg?branch=master"/>}(https://travis-ci.org/sul-dlss/djatoka)
 
 == Installation
 
