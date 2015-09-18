@@ -106,7 +106,6 @@ module Djatoka
       end
 
       region = @resolver.region(@id)
-      metadata = @resolver.metadata(@id).perform
 
       if(@iiif_params[:region] =~ /^(\d+),(\d+),(\d+),(\d+)$/)
         region.region("#{$2},#{$1},#{$4},#{$3}")
@@ -170,6 +169,9 @@ module Djatoka
 
     end
 
+    def metadata
+      @metadata ||= @resolver.metadata(@id).perform
+    end
   end
 
 end
