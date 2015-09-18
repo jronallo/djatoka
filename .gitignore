@@ -25,3 +25,5 @@ pkg
 .ruby-version
 
 .rbx
+
+Gemfile.lock

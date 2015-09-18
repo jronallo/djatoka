@@ -23,7 +23,8 @@ Gem::Specification.new do |s|
   s.add_dependency "mime-types"
 
   s.add_dependency "trollop"
-
+  
+  s.add_development_dependency "test-unit"
   s.add_development_dependency "mocha"
   s.add_development_dependency "fakeweb"
   s.add_development_dependency "shoulda"
