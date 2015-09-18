@@ -89,10 +89,10 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
 
         should 'set "!w,h" requests to the correct scale value' do
           reg = @req.size('!1024,768').djatoka_region
-          assert_equal '1024,674', reg.query.scale
+          assert_equal '384,768', reg.query.scale
 
           reg = @req.size('!1024,500').djatoka_region
-          assert_equal '759,500', reg.query.scale
+          assert_equal '250,500', reg.query.scale
         end
 
         should 'raise an exception if the value cannot be parsed into a Float' do

@@ -106,14 +106,16 @@ module Djatoka
       end
 
       region = @resolver.region(@id)
-
+      region_dimensions = []
       if(@iiif_params[:region] =~ /^(\d+),(\d+),(\d+),(\d+)$/)
         region.region("#{$2},#{$1},#{$4},#{$3}")
+        region_dimensions = [$3, $4]
       elsif(@iiif_params[:region] =~ /^pct:([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)$/)
         x = (($1.to_f / 100.0) * metadata.width.to_f).to_i
         y = (($2.to_f / 100.0) * metadata.height.to_f).to_i
         w = (($3.to_f / 100.0) * metadata.width.to_f).to_i
         h = (($4.to_f / 100.0) * metadata.height.to_f).to_i
+        region_dimensions = [w, h]
         region.region([y, x, h, w])
       elsif(!(@iiif_params[:region] =~ /^full$/i))
         raise IiifInvalidParam.new "region", @iiif_params[:region]
@@ -134,10 +136,13 @@ module Djatoka
       when /^(\d+),(\d+)$/
         region.scale("#{$1},#{$2}")
       when /^!(\d+),(\d+)$/
-        ratio = [$1.to_f / metadata.width.to_f, $2.to_f / metadata.height.to_f].min
-        width = (ratio * metadata.width.to_f).to_i
-        height = (ratio * metadata.height.to_f).to_i
-        region.scale([width, height])
+        region_dimensions = [metadata.width.to_f, metadata.height.to_f] if region_dimensions.empty?
+        scale = [$1.to_f / region_dimensions.first.to_f, $2.to_f / region_dimensions.last.to_f].min
+
+        width = region_dimensions.first.to_f * scale
+        height = region_dimensions.last.to_f * scale
+
+        region.scale([width.ceil, height.ceil])
       else
         raise IiifInvalidParam.new "size", s
       end
