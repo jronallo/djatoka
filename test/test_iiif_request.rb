@@ -56,6 +56,68 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
         end
       end
 
+      context 'translates region and size into DWT levels' do
+        context 'with a given region' do
+          setup do
+            @req.region('0,0,800,600').rotation('0').quality('default').format('jpg')
+          end
+
+          should 'set levels to the correct scale value' do
+            reg = @req.size('1600,').djatoka_region
+            assert_equal '6', reg.query.level
+
+            reg = @req.size('800,').djatoka_region
+            assert_equal '6', reg.query.level
+
+            reg = @req.size('400,').djatoka_region
+            assert_equal '5', reg.query.level
+
+            reg = @req.size('399,').djatoka_region
+            assert_equal '5', reg.query.level
+
+            reg = @req.size('200,').djatoka_region
+            assert_equal '4', reg.query.level
+          end
+        end
+
+        context 'with the full image' do
+          setup do
+            @req.region('full').rotation('0').quality('default').format('jpg')
+          end
+
+          should 'set levels to the correct scale value' do
+            reg = @req.size('5120,').djatoka_region
+            assert_equal '6', reg.query.level
+
+            reg = @req.size('399,').djatoka_region
+            assert_equal '3', reg.query.level
+          end
+        end
+
+        context 'with a pct size' do
+          setup do
+            @req.region('full').rotation('0').quality('default').format('jpg')
+          end
+
+          should 'set levels to the correct scale value' do
+            reg = @req.size('pct:100').djatoka_region
+            assert_equal '6', reg.query.level
+
+            reg = @req.size('pct:125').djatoka_region
+            assert_equal '6', reg.query.level
+
+            reg = @req.size('pct:50').djatoka_region
+            assert_equal '5', reg.query.level
+
+            reg = @req.size('pct:49').djatoka_region
+            assert_equal '5', reg.query.level
+
+            reg = @req.size('pct:23.52').djatoka_region
+            assert_equal '4', reg.query.level
+          end
+        end
+      end
+
       context 'translates size parameters' do
         setup do
           @req.region('10,20,50,100').rotation('0').quality('default').format('jpg')
@@ -69,17 +131,25 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
         should 'set ",h" requests to the correct scale value' do
           reg = @req.size(',900').djatoka_region
           assert_equal '0,900', reg.query.scale
+          assert_equal '6', reg.query.level
         end
 
         should 'set "pct:n" requests to the correct scale value' do
           reg = @req.size('pct:75').djatoka_region
           assert_equal '0.75', reg.query.scale
+          assert_equal '6', reg.query.level
 
           reg = @req.size('pct:125').djatoka_region
           assert_equal '1.25', reg.query.scale
+          assert_equal '6', reg.query.level
+
+          reg = @req.size('pct:20').djatoka_region
+          assert_equal '0.8', reg.query.scale
+          assert_equal '4', reg.query.level
 
           reg = @req.size('pct:6.25').djatoka_region
-          assert_equal '0.0625', reg.query.scale
+          assert_equal '1.0', reg.query.scale
+          assert_equal '2', reg.query.level
         end
 
         should 'set "w,h" requests to the correct scale value' do
