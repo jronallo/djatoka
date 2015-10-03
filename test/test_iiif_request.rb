@@ -39,6 +39,11 @@ class TestDjatokaIiifRequest < Test::Unit::TestCase
           @req.size('full').rotation('0').quality('default').format('jpg')
         end
 
+        should 'set square requests' do
+          reg = @req.region('square').djatoka_region
+          assert_equal '0,874,3372,3372', reg.query.region
+        end
+
         should 'set x,y,w,h requests' do
           reg = @req.region('10,20,50,100').djatoka_region
           assert_equal '20,10,100,50', reg.query.region

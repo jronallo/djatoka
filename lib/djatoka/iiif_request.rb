@@ -108,17 +108,35 @@ module Djatoka
       region = @resolver.region(@id)
       offsets = []
       region_dimensions = []
-      if(@iiif_params[:region] =~ /^(\d+),(\d+),(\d+),(\d+)$/)
+
+      case @iiif_params[:region]
+      when 'full'
+        # noop
+      when 'square'
+        w = metadata.width.to_i
+        h = metadata.height.to_i
+        min, max = [w,h].minmax
+
+        offset = (max - min) / 2
+
+        region_dimensions = [min, min]
+
+        if h >= w
+          offsets = [0, offset]
+        else
+          offsets = [offset, 0]
+        end
+      when /^(\d+),(\d+),(\d+),(\d+)$/
         offsets = [$1, $2]
         region_dimensions = [$3, $4]
-      elsif(@iiif_params[:region] =~ /^pct:([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)$/)
+      when /^pct:([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)$/
         x = (($1.to_f / 100.0) * metadata.width.to_f).to_i
         y = (($2.to_f / 100.0) * metadata.height.to_f).to_i
         w = (($3.to_f / 100.0) * metadata.width.to_f).to_i
         h = (($4.to_f / 100.0) * metadata.height.to_f).to_i
         offsets = [x, y]
         region_dimensions = [w, h]
-      elsif(!(@iiif_params[:region] =~ /^full$/i))
+      else
         raise IiifInvalidParam.new "region", @iiif_params[:region]
       end
 
