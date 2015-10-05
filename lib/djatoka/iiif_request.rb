@@ -106,17 +106,37 @@ module Djatoka
       end
 
       region = @resolver.region(@id)
-      metadata = @resolver.metadata(@id).perform
+      offsets = []
+      region_dimensions = []
 
-      if(@iiif_params[:region] =~ /^(\d+),(\d+),(\d+),(\d+)$/)
-        region.region("#{$2},#{$1},#{$4},#{$3}")
-      elsif(@iiif_params[:region] =~ /^pct:([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)$/)
+      case @iiif_params[:region]
+      when 'full'
+        # noop
+      when 'square'
+        w = metadata.width.to_i
+        h = metadata.height.to_i
+        min, max = [w,h].minmax
+
+        offset = (max - min) / 2
+
+        region_dimensions = [min, min]
+
+        if h >= w
+          offsets = [0, offset]
+        else
+          offsets = [offset, 0]
+        end
+      when /^(\d+),(\d+),(\d+),(\d+)$/
+        offsets = [$1, $2]
+        region_dimensions = [$3, $4]
+      when /^pct:([\d\.]+),([\d\.]+),([\d\.]+),([\d\.]+)$/
         x = (($1.to_f / 100.0) * metadata.width.to_f).to_i
         y = (($2.to_f / 100.0) * metadata.height.to_f).to_i
         w = (($3.to_f / 100.0) * metadata.width.to_f).to_i
         h = (($4.to_f / 100.0) * metadata.height.to_f).to_i
-        region.region([y, x, h, w])
-      elsif(!(@iiif_params[:region] =~ /^full$/i))
+        offsets = [x, y]
+        region_dimensions = [w, h]
+      else
         raise IiifInvalidParam.new "region", @iiif_params[:region]
       end
 
@@ -127,20 +147,38 @@ module Djatoka
         s #noop
       when /^(\d+),$/
         region.scale( ["#{$1}", "0"] ) #w => w,0
+        region.level(djatoka_level((region_dimensions.first || metadata.width).to_i / $1.to_f))
       when /^,(\d+)$/
         region.scale( ["0", "#{$1}"] ) #h => 0,h
+        region.level(djatoka_level((region_dimensions.last || metadata.height).to_i / $1.to_f))
       when /^pct:(\d*\.?\d*)$/i
         dj_scale = $1.to_f / 100.0
-        region.scale(dj_scale.to_s)
+        level = djatoka_level(1 / dj_scale)
+        reduce = max_level - level.to_i
+        region.scale((dj_scale * 2**reduce).to_s)
+        region.level(level)
       when /^(\d+),(\d+)$/
         region.scale("#{$1},#{$2}")
+        region.level(djatoka_level((region_dimensions.first || metadata.width).to_i / $1.to_f))
       when /^!(\d+),(\d+)$/
-        ratio = [$1.to_f / metadata.width.to_f, $2.to_f / metadata.height.to_f].min
-        width = (ratio * metadata.width.to_f).to_i
-        height = (ratio * metadata.height.to_f).to_i
-        region.scale([width, height])
+        region_dimensions = [metadata.width.to_f, metadata.height.to_f] if region_dimensions.empty?
+        scale = [$1.to_f / region_dimensions.first.to_f, $2.to_f / region_dimensions.last.to_f].min
+
+        width = region_dimensions.first.to_f * scale
+        height = region_dimensions.last.to_f * scale
+
+        region.scale([width.ceil, height.ceil])
+        region.level(djatoka_level(region_dimensions.first.to_f / width))
       else
         raise IiifInvalidParam.new "size", s
+      end
+
+      unless offsets.empty?
+        reduce = max_level - region.query.fetch(:level, max_level).to_i
+        w, h = region_dimensions.map { |d| d.to_i / (2**reduce) }
+
+        x, y = offsets
+        region.region("#{y},#{x},#{h},#{w}")
       end
 
       unless(@iiif_params[:rotation].numeric?)
@@ -170,6 +208,24 @@ module Djatoka
 
     end
 
+    def djatoka_level(ratio)
+      return max_level if ratio <= 1
+      level = max_level - Math.log2(ratio).to_i
+
+      if level < 1
+        1
+      else
+        level
+      end
+    end
+
+    def max_level
+      @max_level ||= metadata.levels.to_i
+    end
+
+    def metadata
+      @metadata ||= @resolver.metadata(@id).perform
+    end
   end
 
 end
