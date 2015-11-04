@@ -125,7 +125,7 @@ class TestDjatokaMetadata < Test::Unit::TestCase
             {
               "width": 512,
               "height": 512,
-              "scaleFactors": [1, 2, 3, 4, 5, 6]
+              "scaleFactors": [1, 2, 4, 8, 16, 32]
             }
           ],
           "sizes": [

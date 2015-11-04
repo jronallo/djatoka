@@ -133,7 +133,8 @@ class Djatoka::Metadata
       tiles["height"] = opts.tile_height.to_i
     end
     unless tiles.empty?
-      tiles["scaleFactors"] = levels_as_i
+      tiles["scaleFactors"] = scale_factors
+
       info.tiles = [tiles]
     end
 
@@ -160,4 +161,9 @@ class Djatoka::Metadata
     all_levels.keys.map{ |l| l.to_i}.sort.reject{|l| l == 0}
   end
 
+  def scale_factors
+    levels_as_i.map do |i|
+      2**(i - 1)
+    end
+  end
 end
